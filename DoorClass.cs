@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using DungeonExplorer;
 
 namespace DungeonExplorer
 {
@@ -12,12 +13,14 @@ namespace DungeonExplorer
         //Door State
         public bool IsLocked { get; private set; }
         public string DoorDescription { get; private set; }
+        public string KeyRequired { get; private set; } //Key required to unlock the door
 
-        //Constructor to create a door with a description and lock state
-        public Door(string description = "A wooden door", bool isLocked = false)
+        //Constructor to create a door with a description, lock state, and key requirement
+        public Door(string description = "A wooden door", bool isLocked = false, string keyRequired = "")
         {
             DoorDescription = description;
             IsLocked = isLocked;
+            KeyRequired = keyRequired;
         }
 
         //Display the door's locked status
@@ -27,30 +30,26 @@ namespace DungeonExplorer
         }
 
         //Unlock the door
-        public void Unlock()
+        public bool TryUnlock(string key)
         {
             if (IsLocked)
             {
-                IsLocked = false;
-                Console.WriteLine("You have unlocked the door.");
+                if (key == KeyRequired)
+                {
+                    IsLocked = false;
+                    Console.WriteLine("You have unlocked the door.");
+                    return true; // Door unlocked successfully
+                }
+                else
+                {
+                    Console.WriteLine("This door is locked. You need the correct key.");
+                    return false; // Incorrect key
+                }
             }
             else
             {
                 Console.WriteLine("The door is already unlocked.");
-            }
-        }
-
-        //Lock the door
-        public void Lock()
-        {
-            if (!IsLocked)
-            {
-                IsLocked = true;
-                Console.WriteLine("You have locked the door.");
-            }
-            else
-            {
-                Console.WriteLine("The door is already locked.");
+                return true; // Door is already unlocked
             }
         }
     }

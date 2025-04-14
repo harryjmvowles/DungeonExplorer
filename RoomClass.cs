@@ -11,30 +11,52 @@ namespace DungeonExplorer
     //Creates Room Class
     public class Room
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public List<string> Items { get; set; }
-        public bool BeenHere = false;
-        public Dictionary<string, PointOfInterest> PointsOfInterest { get; set; }
-        public Dictionary<string, string> Exits { get; set; }
-        public Door RoomDoor { get; set; }
+        public string Name;
+        public string Description;
+        public List<string> Items;
+        public Dictionary<string, PointOfInterest> PointsOfInterest;
+        public Dictionary<string, Door> Exits;
+        public bool BeenHere;
+        public Room currentRoom; //Current room the player is in
 
-        public Room(string name, string description, List<string> items = null, Dictionary<string, PointOfInterest> pointsOfInterest = null, Door door = null)
+        //Room Constructor accepting PointsOfInterest and Exits
+        public Room(string name, string description, Dictionary<string, PointOfInterest> pointsOfInterest, Dictionary<string, Door> exits)
         {
             Name = name;
             Description = description;
-            Items = items ?? new List<string>();
-            PointsOfInterest = pointsOfInterest ?? new Dictionary<string, PointOfInterest>(StringComparer.OrdinalIgnoreCase);
-            Exits = new Dictionary<string, string>();
-            RoomDoor = door ?? new Door();
+            Items = new List<string>();
+            PointsOfInterest = pointsOfInterest;
+            Exits = exits;
             BeenHere = false;
         }
+
+        //Method to add an exit door to the room
+        public void AddExit(string direction, Door door)
+        {
+            Exits[direction] = door;
+        }
+
+        //Try to use an exit (unlock door if locked)
+        public bool TryUseExit(string direction, string key)
+        {
+            if (Exits.ContainsKey(direction))
+            {
+                Door exit = Exits[direction];
+                if (exit.TryUnlock(key))
+                {
+                    return true; //Move through door if it's unlocked
+                }
+                return false; //Can't move through locked door
+            }
+            return false; //Exit doesn't exist
+        }
+
+
 
 
         //When the player enters the room
         public void Enter()
         {
-            //If the player has not been here before
             if (!BeenHere)
             {
                 //Display the room details
@@ -75,8 +97,8 @@ namespace DungeonExplorer
                 Console.WriteLine("2. View inventory/Health Status");
                 Console.WriteLine("3. Interact with a point of interest");
                 Console.WriteLine("4. Pick up an item");
-                Console.WriteLine("5. Go to the door");
-                Console.WriteLine("6. Exit the room / end game!");
+                Console.WriteLine("5. Try a door");
+                Console.WriteLine("6. Give Up! (END GAME)");
 
 
                 //Read player input
@@ -111,10 +133,10 @@ namespace DungeonExplorer
                         PickUpItem(item, currentPlayer);  //Pick up an item
                         break;
                     case "5":
-                        Console.WriteLine("You try the door but its broken, you are going to have to find another way out.");  //Check door status (locked/unlocked) Not Implemented yet!
+                        TryDoor(currentPlayer);  //Try a door
                         break;
                     case "6":
-                        Console.WriteLine("This feature has not been added yet and so you have opted to end the game! Thankyou for playing."); //Exit the room Not Implemented yet so this is the end game button.
+                        Console.WriteLine("You have opted to end the game early, better luck next time! Thankyou for playing."); //Early exit buttom from code
                         Console.WriteLine("Press any key to continue...");
                         Environment.Exit(0);
                         break;
@@ -124,7 +146,6 @@ namespace DungeonExplorer
                 }
             } while (command != "6");  //Exit the room loop when the player chooses to leave
         }
-
 
         //Add an item to the room
         public void AddItem(string item)
@@ -142,32 +163,23 @@ namespace DungeonExplorer
         //Display the items in the room
         public void DisplayItems()
         {
-            //Check if there is exactly one item in the list
-            if (Items.Count == 1)
+            var validItems = Items.Where(item => !string.IsNullOrWhiteSpace(item)).ToList(); //ignore empty or whitespace items
+
+            if (validItems.Count == 0)
             {
-                //If that item is empty, display "Items: N/A"
-                if (string.IsNullOrEmpty(Items[0]))
-                {
-                    Console.WriteLine("Items: N/A");
-                }
-                else
-                {
-                    Console.WriteLine("Item in the room: " + Items[0]);
-                }
+                Console.WriteLine("Items: N/A"); //No items in the room
             }
-            //If there are more than one item
-            else if (Items.Count > 1)
+            else if (validItems.Count == 1)
             {
-                Console.WriteLine("Items in the room:");
-                foreach (string item in Items)
-                {
-                    Console.WriteLine("- " + item);
-                }
+                Console.WriteLine("Item in the room: " + validItems[0]); //Only one item in the room
             }
-            //If there are no items in the room
             else
             {
-                Console.WriteLine("No items in the room.");
+                Console.WriteLine("Items in the room:");
+                foreach (string item in validItems)
+                {
+                    Console.WriteLine("- " + item); //Display all items in the room
+                }
             }
         }
 
@@ -211,7 +223,7 @@ namespace DungeonExplorer
                     {
                         Console.WriteLine($"You pick up the {foundItem}.");
                         point.RemoveItem(foundItem);
-                        currentPlayer.AddToInventory(foundItem);  
+                        currentPlayer.AddToInventory(foundItem);
                     }
                     else
                     {
@@ -221,7 +233,7 @@ namespace DungeonExplorer
             }
             else
             {
-                Console.WriteLine("That point of interest doesn't exist in this room.");    
+                Console.WriteLine("That point of interest doesn't exist in this room.");
             }
         }
 
@@ -243,6 +255,58 @@ namespace DungeonExplorer
                 Console.Clear();
             }
         }
-    }
 
+        //Try a door method
+        public void TryDoor(Player currentPlayer)
+        {
+            Room currentRoom = currentPlayer.CurrentRoom;
+            Console.WriteLine("Available directions:");
+            foreach (var direction in currentRoom.Exits.Keys)  // Access Exits from the correct targetRoom
+            {
+                Console.WriteLine("- " + direction);
+            }
+
+            Console.WriteLine("Which direction would you like to try?");
+            string chosenDirection = Console.ReadLine();
+
+            // Ensure the Exits dictionary contains the direction
+            if (currentRoom.Exits.TryGetValue(chosenDirection, out Door door))  // Try to find the door for the chosen direction
+            {
+                if (door.IsLocked)
+                {
+                    Console.WriteLine("The door is locked. Try using a key? (yes/no)");
+                    string useKey = Console.ReadLine().ToLower();
+
+                    if (useKey == "yes" && currentPlayer.Keys > 0)
+                    {
+                        currentPlayer.UseKey();  // Decrease key count
+                        if (door.TryUnlock(currentPlayer.Keys.ToString()))  // Unlock the door if correct key is used
+                        {
+                            Console.WriteLine("You open the door...");
+                            // Proceed to the next targetRoom logic here
+                        }
+                    }
+                    else if (useKey == "yes")
+                    {
+                        Console.WriteLine("You have no keys.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("You back away from the door.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("You open the door...");
+                    // Proceed to the next targetRoom logic here
+                }
+            }
+            else
+            {
+                Console.WriteLine("There's no door in that direction.");
+            }
+        }
+
+
+    }
 }

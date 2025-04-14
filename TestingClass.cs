@@ -31,12 +31,6 @@ namespace DungeonExplorer
         {
             Door door = new Door("Test Door", true);
             Debug.Assert(door.IsLocked, "Door should be locked initially");
-
-            door.Unlock();
-            Debug.Assert(!door.IsLocked, "Door should be unlocked after Unlock() is called");
-
-            door.Lock();
-            Debug.Assert(door.IsLocked, "Door should be locked after Lock() is called");
         }
     }
 }

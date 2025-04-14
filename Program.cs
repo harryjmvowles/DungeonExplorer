@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 
 namespace DungeonExplorer
 {
@@ -65,6 +66,8 @@ namespace DungeonExplorer
 
             //Retrieve the 'Lost Hall' room from the RoomManager
             Room lostHall = roomManager.GetRoom("The Lost Hall");
+            currentPlayer.CurrentRoom = lostHall; //Set the current room for the player
+
 
             //Now let the player enter the Lost Hall room
             if (lostHall != null)

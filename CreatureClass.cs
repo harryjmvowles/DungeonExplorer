@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DungeonExplorer
 {
-    //The Creature_Class is to be used to inherit for player and enemy classes.
+    //The CreatureClass is to be used to inherit for player and enemy classes.
     public abstract class Creature
     {
         public string Name { get; protected set; }

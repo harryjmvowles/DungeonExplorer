@@ -19,6 +19,7 @@ namespace DungeonExplorer
         private int _experience = 0;
         private int _experienceToNextLevel = 100;
         private List<string> _inventory;
+        public Room currentRoom;
 
         //Getters and Setters
         public int Potions { get => _potions; private set => _potions = value; }
@@ -27,6 +28,7 @@ namespace DungeonExplorer
         public int Experience { get => _experience; private set => _experience = value; }
         public int ExperienceToNextLevel { get => _experienceToNextLevel; private set => _experienceToNextLevel = value; }
         public List<string> Inventory { get => _inventory; private set => _inventory = value; }
+        public Room CurrentRoom { get; set; }
 
         //Constructor to create a player with a name and inventory
         public Player(string name)
@@ -76,6 +78,20 @@ namespace DungeonExplorer
             else
             {
                 Console.WriteLine("Invalid potion amount.");
+            }
+        }
+
+        //Method to use a key
+        public void UseKey()
+        {
+            if (Keys > 0)
+            {
+                Keys--;
+                Console.WriteLine("You have used a key.");
+            }
+            else
+            {
+                Console.WriteLine("You have no keys left.");
             }
         }
     }
