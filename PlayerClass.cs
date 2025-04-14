@@ -4,17 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Xml.Linq;
+
 
 namespace DungeonExplorer
 {
     //Creates Player Class
-    public class Player
+    public class Player : Creature
     {
         //Player Stats with default values
-        private string _name;
-        private int _health = 100;
-        private int _attack = 10;
-        private int _defense = 5;
         private int _potions = 0;
         private int _keys = 0;
         private int _level = 1;
@@ -23,22 +21,24 @@ namespace DungeonExplorer
         private List<string> _inventory;
 
         //Getters and Setters
-        public string Name { get => _name; private set => _name = value; }
-        public int Health { get => _health; private set => _health = value; }
         public int Potions { get => _potions; private set => _potions = value; }
+        public int Keys { get => _keys; private set => _keys = value; }
+        public int Level { get => _level; private set => _level = value; }
+        public int Experience { get => _experience; private set => _experience = value; }
+        public int ExperienceToNextLevel { get => _experienceToNextLevel; private set => _experienceToNextLevel = value; }
         public List<string> Inventory { get => _inventory; private set => _inventory = value; }
 
         //Constructor to create a player with a name and inventory
         public Player(string name)
+            : base(name, 100, 10, 5)
         {
-            _name = name;
             _inventory = new List<string>();
         }
 
         //Method to view player inventory
         public void ViewInventory()
         {
-            Console.WriteLine($"Name: {Name}\nHealth: {_health}\nPotions: {_potions}\nLevel: {_level}\nKeys: {_keys}");
+            Console.WriteLine($"Name: {Name}\nHealth: {Health}\nPotions: {_potions}\nLevel: {_level}\nKeys: {_keys}");
             Console.WriteLine("Inventory:");
             foreach (string item in _inventory)
             {
