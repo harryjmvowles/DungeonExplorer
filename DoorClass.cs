@@ -13,14 +13,13 @@ namespace DungeonExplorer
         //Door State
         public bool IsLocked { get; private set; }
         public string DoorDescription { get; private set; }
-        public string KeyRequired { get; private set; } //Key required to unlock the door
+        public string LeadsTo { get; set; } //Room this door connects to
 
-        //Constructor to create a door with a description, lock state, and key requirement
-        public Door(string description = "A wooden door", bool isLocked = false, string keyRequired = "")
+        //Constructor to create a door with a description and lock state
+        public Door(string description = "A wooden door", bool isLocked = false)
         {
             DoorDescription = description;
             IsLocked = isLocked;
-            KeyRequired = keyRequired;
         }
 
         //Display the door's locked status
@@ -30,26 +29,18 @@ namespace DungeonExplorer
         }
 
         //Unlock the door
-        public bool TryUnlock(string key)
+        public bool TryUnlock()
         {
             if (IsLocked)
             {
-                if (key == KeyRequired)
-                {
-                    IsLocked = false;
-                    Console.WriteLine("You have unlocked the door.");
-                    return true; // Door unlocked successfully
-                }
-                else
-                {
-                    Console.WriteLine("This door is locked. You need the correct key.");
-                    return false; // Incorrect key
-                }
+                IsLocked = false;
+                Console.WriteLine("You have unlocked the door.");
+                return true; //Door unlocked successfully
             }
             else
             {
                 Console.WriteLine("The door is already unlocked.");
-                return true; // Door is already unlocked
+                return true; //Door is already unlocked
             }
         }
     }

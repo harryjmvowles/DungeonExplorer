@@ -20,39 +20,22 @@ namespace DungeonExplorer
         public Room currentRoom; //Current room the player is in
 
         //Room Constructor accepting PointsOfInterest and Exits
-        public Room(string name, string description, Dictionary<string, PointOfInterest> pointsOfInterest, Dictionary<string, Door> exits)
+        public Room(string name, string description,List<string> items, Dictionary<string, PointOfInterest> pointsOfInterest, Dictionary<string, Door> exits)
         {
             Name = name;
             Description = description;
-            Items = new List<string>();
+            Items = items ?? new List<string>();
             PointsOfInterest = pointsOfInterest;
             Exits = exits;
             BeenHere = false;
         }
+
 
         //Method to add an exit door to the room
         public void AddExit(string direction, Door door)
         {
             Exits[direction] = door;
         }
-
-        //Try to use an exit (unlock door if locked)
-        public bool TryUseExit(string direction, string key)
-        {
-            if (Exits.ContainsKey(direction))
-            {
-                Door exit = Exits[direction];
-                if (exit.TryUnlock(key))
-                {
-                    return true; //Move through door if it's unlocked
-                }
-                return false; //Can't move through locked door
-            }
-            return false; //Exit doesn't exist
-        }
-
-
-
 
         //When the player enters the room
         public void Enter()
@@ -259,6 +242,7 @@ namespace DungeonExplorer
         //Try a door method
         public void TryDoor(Player currentPlayer)
         {
+            RoomManager roomManager = new RoomManager(); //Initialize RoomManager to access predefined rooms
             Room currentRoom = currentPlayer.CurrentRoom;
             Console.WriteLine("Available directions:");
             foreach (var direction in currentRoom.Exits.Keys)  // Access Exits from the correct targetRoom
@@ -280,11 +264,13 @@ namespace DungeonExplorer
                     if (useKey == "yes" && currentPlayer.Keys > 0)
                     {
                         currentPlayer.UseKey();  // Decrease key count
-                        if (door.TryUnlock(currentPlayer.Keys.ToString()))  // Unlock the door if correct key is used
-                        {
-                            Console.WriteLine("You open the door...");
-                            // Proceed to the next targetRoom logic here
-                        }
+                        if (door.TryUnlock());    // Generic unlock, no key name needed
+                            if (!string.IsNullOrEmpty(door.LeadsTo))
+                            {
+                            Room nextRoom = roomManager.GetOrCreateRoom(door.LeadsTo);
+                            currentPlayer.CurrentRoom = nextRoom;
+                            nextRoom.Enter();
+                            }
                     }
                     else if (useKey == "yes")
                     {
@@ -298,7 +284,19 @@ namespace DungeonExplorer
                 else
                 {
                     Console.WriteLine("You open the door...");
-                    // Proceed to the next targetRoom logic here
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    Console.Clear();
+                    //Move to Room.
+                    if (door.TryUnlock()) // If the door is unlocked
+                    {
+                        if (!string.IsNullOrEmpty(door.LeadsTo))
+                        {
+                            Room nextRoom = roomManager.GetOrCreateRoom(door.LeadsTo);
+                            currentPlayer.CurrentRoom = nextRoom;
+                            nextRoom.Enter();
+                        }
+                    }
                 }
             }
             else
