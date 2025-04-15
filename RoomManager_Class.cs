@@ -13,6 +13,7 @@ namespace DungeonExplorer
     {
         //Dictionary to store rooms by name
         private Dictionary<string, Room> predefinedRooms;
+        private Dictionary<string, Room> rooms = new Dictionary<string, Room>();
 
         // Shared doors to prevent duplication and state reset
         private Door lostHallToForgottenChamber;
