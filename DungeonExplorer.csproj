@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Accessibility.cs" />
     <Compile Include="CreatureClass.cs" />
     <Compile Include="TestingClass.cs" />
     <Compile Include="DoorClass.cs" />

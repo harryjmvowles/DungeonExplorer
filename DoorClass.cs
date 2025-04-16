@@ -10,38 +10,51 @@ namespace DungeonExplorer
 {
     public class Door
     {
-        //Door State
+        // Door State
         public bool IsLocked { get; private set; }
         public string DoorDescription { get; private set; }
-        public string LeadsTo { get; set; } //Room this door connects to
+        public string Direction { get; set; }
 
-        //Constructor to create a door with a description and lock state
-        public Door(string description = "A wooden door", bool isLocked = false)
+        // Bidirectional room links
+        public string RoomA { get; private set; }
+        public string RoomB { get; private set; }
+
+        // Constructor for bidirectional doors
+        public Door(string description = "A wooden door", bool isLocked = false, string direction = "Unknown", string roomA = null, string roomB = null)
         {
             DoorDescription = description;
             IsLocked = isLocked;
+            Direction = direction;
+            RoomA = roomA;
+            RoomB = roomB;
         }
 
-        //Display the door's locked status
+        // Display the door's locked status
         public void CheckDoorStatus()
         {
             Console.WriteLine(IsLocked ? "The door is locked." : "The door is unlocked.");
         }
 
-        //Unlock the door
+        // Unlock the door
         public bool TryUnlock()
         {
             if (IsLocked)
             {
                 IsLocked = false;
-                Console.WriteLine("You have unlocked the door.");
-                return true; //Door unlocked successfully
+                return true;
             }
-            else
-            {
-                Console.WriteLine("The door is already unlocked.");
-                return true; //Door is already unlocked
-            }
+
+            return true; // Already unlocked
+        }
+
+        // Get the opposite room from the current one
+        public string GetOtherSide(string currentRoom)
+        {
+            if (currentRoom == RoomA) return RoomB;
+            if (currentRoom == RoomB) return RoomA;
+
+            throw new InvalidOperationException($"Room '{currentRoom}' is not connected to this door.");
         }
     }
+
 }
