@@ -76,8 +76,8 @@ namespace DungeonExplorer
             do
             {
                 // Show available actions + reshow description
-                Console.WriteLine("\nWhat would you like to do?");
-                Console.WriteLine("1. View Room description again");
+                Console.WriteLine("\nWhat would you like to do?\n");
+                Console.WriteLine("1. View Room description");
                 Console.WriteLine("2. View inventory/Health Status");
                 Console.WriteLine("3. Interact with a point of interest");
                 Console.WriteLine("4. Pick up an item");
@@ -91,6 +91,7 @@ namespace DungeonExplorer
                 {
                     case "1":
                         Console.Clear();
+                        Console.WriteLine(Name);
                         Console.WriteLine(Description);  // Show room description
                         DisplayItems();
                         DisplayPointsOfInterest();
@@ -98,6 +99,7 @@ namespace DungeonExplorer
                         Console.ReadKey();
                         break;
                     case "2":
+                        Console.Clear();
                         currentPlayer.ViewInventory();  // Show inventory
                         Console.Clear();
                         break;
@@ -195,6 +197,8 @@ namespace DungeonExplorer
                 string choice = Console.ReadLine().ToLower();
                 if (choice == "yes")
                 {
+                    Console.Clear();
+                    DisplayItems();
                     Console.WriteLine("Which item would you like to pick up?");
                     string itemToPick = Console.ReadLine();
                     string foundItem = point.Items.FirstOrDefault(i => i.Equals(itemToPick, StringComparison.OrdinalIgnoreCase)); // Ignores case when comparing
@@ -224,6 +228,9 @@ namespace DungeonExplorer
             if (!string.IsNullOrEmpty(foundItem))
             {
                 Console.WriteLine($"You pick up the {foundItem}."); // If the item is in the room
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+                Console.Clear();
                 Items.Remove(foundItem);
                 currentPlayer.AddToInventory(foundItem);
             }
@@ -267,6 +274,7 @@ namespace DungeonExplorer
                                 Console.WriteLine("You unlocked the door!");
                                 Console.WriteLine("Press any key to continue...");
                                 Console.ReadKey();
+                                Console.Clear();
 
                                 string otherRoomName = door.GetOtherSide(currentRoom.Name); // Get the other room using bidirectional link
                                 Room nextRoom = roomManager.GetOrCreateRoom(otherRoomName); // Load the other room
@@ -277,11 +285,17 @@ namespace DungeonExplorer
                         else
                         {
                             Console.WriteLine("You have no keys.");
+                            Console.WriteLine("Press any key to continue...");
+                            Console.ReadKey();
+                            Console.Clear();
                         }
                     }
                     else
                     {
-                        Console.WriteLine("You back away from the door.");
+                        Console.WriteLine("You back away from the door. (No or Incorrect Input)");
+                        Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey();
+                        Console.Clear();
                     }
                 }
                 else
@@ -300,6 +314,9 @@ namespace DungeonExplorer
             else
             {
                 Console.WriteLine("There's no door in that direction.");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+                Console.Clear();
             }
         }
     }
