@@ -46,7 +46,7 @@ namespace DungeonExplorer
             if (!BeenHere)
             {
                 // Display the room details
-                Console.WriteLine("You enter a new room... it is clearly " + Name);
+                Console.WriteLine("You enter a new room... it is " + Name);
                 Console.WriteLine(Description);
                 DisplayItems();
                 DisplayPointsOfInterest();

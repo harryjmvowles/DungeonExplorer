@@ -32,9 +32,11 @@ namespace DungeonExplorer
 
         public void StartGame()
         {
-            Console.WriteLine("|| THE DUNGEON ||");
-            Console.WriteLine("Hello Adventurer, Brave enough to enter The Dungeon I see...");
-            Console.WriteLine("What is your name?: ");
+            Console.WriteLine(" /============================================================================\\ \r\n ||                                                                          || \r\n ||                                                                          || \r\n ||                                                                          || \r\n ||                                                                          || \r\n ||                                                                          || \r\n ||                         ████████╗██╗  ██╗███████╗                        || \r\n ||                         ╚══██╔══╝██║  ██║██╔════╝                        || \r\n ||                            ██║   ███████║█████╗                          || \r\n ||                            ██║   ██╔══██║██╔══╝                          || \r\n ||                            ██║   ██║  ██║███████╗                        || \r\n ||                            ╚═╝   ╚═╝  ╚═╝╚══════╝                        || \r\n ||                                                                          || \r\n ||     ██████╗ ██╗   ██╗███╗   ██╗ ██████╗ ███████╗ ██████╗ ███╗   ██╗      || \r\n ||     ██╔══██╗██║   ██║████╗  ██║██╔════╝ ██╔════╝██╔═══██╗████╗  ██║      || \r\n ||     ██║  ██║██║   ██║██╔██╗ ██║██║  ███╗█████╗  ██║   ██║██╔██╗ ██║      || \r\n ||     ██║  ██║██║   ██║██║╚██╗██║██║   ██║██╔══╝  ██║   ██║██║╚██╗██║      || \r\n ||     ██████╔╝╚██████╔╝██║ ╚████║╚██████╔╝███████╗╚██████╔╝██║ ╚████║      || \r\n ||     ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝      || \r\n ||                                                                          || \r\n ||                      PRESS ANY KEY TO CONTINUE■■■■                       || \r\n ||                                                                          || \r\n ||                                                                          || \r\n ||                                                                          || \r\n \\============================================================================/ ");
+            Console.ReadKey();
+            Console.Clear();
+            Console.WriteLine("'Why what do have we here? A brave new adventurer willing to explore the dungeon!' \nA strange hooded Man perched outside the massive decaying door then spoke directly to you...");
+            Console.WriteLine("\n'What is your name?': ");
             string playerName = Console.ReadLine();
 
             while (string.IsNullOrWhiteSpace(playerName))
@@ -47,7 +49,7 @@ namespace DungeonExplorer
 
             // Initialize the player
             CurrentPlayer = new Player(playerName);
-            Console.WriteLine($"Well GoodLuck {CurrentPlayer.Name}! Take these.... You will need them.");
+            Console.WriteLine($"'Well GoodLuck {CurrentPlayer.Name}!'\n'Take these.... You will need them.'");
             CurrentPlayer.AddPotion(2);
             Console.WriteLine("Press Any Key to continue....");
             Console.ReadKey();
@@ -55,7 +57,7 @@ namespace DungeonExplorer
 
             // Story intro
             Console.WriteLine("The mysterious man at the entrance of The Dungeon suddenly disappeared...");
-            Console.WriteLine("You are now trapped in The Dungeon.... How will you escape?");
+            Console.WriteLine("You are now trapped in The Dungeon, a hall of the lost.... How will you escape?");
             Console.WriteLine("Press Any Key to continue....");
             Console.ReadKey();
             Console.Clear();

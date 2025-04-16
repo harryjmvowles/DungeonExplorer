@@ -73,7 +73,7 @@ namespace DungeonExplorer
             if (amount > 0)
             {
                 _potions += amount;
-                Console.WriteLine($"You have added {amount} potion(s). You now have {_potions} potion(s).");
+                Console.WriteLine($"You have added {amount} potion(s) to your bag. You now have {_potions} potion(s).");
             }
             else
             {
