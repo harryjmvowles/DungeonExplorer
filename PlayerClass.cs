@@ -9,33 +9,34 @@ using System.Xml.Linq;
 
 namespace DungeonExplorer
 {
-    //Creates Player Class
+    // Creates Player Class
     public class Player : Creature
     {
-        //Player Stats with default values
         private int _potions = 0;
         private int _keys = 0;
         private int _level = 1;
         private int _experience = 0;
         private int _experienceToNextLevel = 100;
         private List<string> _inventory;
-        public Room currentRoom;
+        public Room CurrentRoom { get; set; }
 
-        //Getters and Setters
+        // Player-specific properties and getter/setter
         public int Potions { get => _potions; private set => _potions = value; }
         public int Keys { get => _keys; private set => _keys = value; }
         public int Level { get => _level; private set => _level = value; }
         public int Experience { get => _experience; private set => _experience = value; }
         public int ExperienceToNextLevel { get => _experienceToNextLevel; private set => _experienceToNextLevel = value; }
         public List<string> Inventory { get => _inventory; private set => _inventory = value; }
-        public Room CurrentRoom { get; set; }
 
-        //Constructor to create a player with a name and inventory
-        public Player(string name)
-            : base(name, 100, 10, 5)
+        // Constructor for Player
+        public Player(string name, int health = 100, int defense = 5, int armorValue = 5, int weaponValue = 5)
+            : base(name, health, defense, armorValue, weaponValue)
         {
             _inventory = new List<string>();
         }
+    
+    
+
 
         //Method to view player inventory
         public void ViewInventory()
@@ -92,6 +93,21 @@ namespace DungeonExplorer
             else
             {
                 Console.WriteLine("You have no keys left.");
+            }
+        }
+
+        //Method to use a potion
+        public void UsePotion()
+        {
+            if (Potions > 0)
+            {
+                Potions--;
+                Health += 25;
+                Console.WriteLine("You have used a potion. Your health has increased by 25.");
+            }
+            else
+            {
+                Console.WriteLine("You have no potions left.");
             }
         }
     }

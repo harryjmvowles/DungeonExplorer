@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Accessibility.cs" />
     <Compile Include="CreatureClass.cs" />
+    <Compile Include="EncountersClass.cs" />
     <Compile Include="TestingClass.cs" />
     <Compile Include="DoorClass.cs" />
     <Compile Include="PlayerClass.cs" />
