@@ -4,37 +4,47 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DungeonExplorer
-{
-    // The CreatureClass is used to inherit for player and enemy classes.
+
+
+    // Creature Class
+    namespace DungeonExplorer
+    {
     public abstract class Creature
     {
         public string Name { get; protected set; }
-        public int Health { get; protected internal set; }
-        public int Defense { get; protected set; }
-        public int ArmorValue { get; protected set; }
-        public int WeaponValue { get; protected set; }
+        public Statistics Stats { get; protected set; } // Using Statistics for Creature's stats
 
         // Constructor for Creature Class (Player and Enemy)
-        public Creature(string name, int health = 100, int defense = 5, int armorValue = 5, int weaponValue = 5)
+        public Creature(string name, int health = 100, int armorValue = 5, int weaponValue = 5)
         {
             Name = name;
-            Health = health;
-            Defense = defense;
-            ArmorValue = armorValue;
-            WeaponValue = weaponValue;
+            Stats = new Statistics
+            {
+                Health = health,
+                ArmorValue = armorValue,
+                WeaponValue = weaponValue
+            };
+        }
+    }
+
+    // Enemy Class
+    public class Enemy : Creature, IDamageable
+    {
+        public string Weapon { get; private set; }
+
+        // Enemy-specific constructor with weapon, armor, stats, etc.
+        public Enemy(string name, int health, string weapon, int armorValue, int weaponValue)
+            : base(name, health, armorValue, weaponValue)
+        {
+            Weapon = weapon;
         }
 
-        public class Enemy : Creature
+        // Method to take damage
+        public void TakeDamage(int amount)
         {
-            public string Weapon { get; private set; }
-
-            // Enemy-specific constructor with weapon, armor, stats, etc.
-            public Enemy(string name, int health, int defense, string weapon, int armorValue, int weaponValue)
-                : base(name, health, defense, armorValue, weaponValue)
-            {
-                Weapon = weapon;
-            }
+            Stats.Health -= amount;
+            if (Stats.Health < 0)
+                Stats.Health = 0;
         }
     }
 }

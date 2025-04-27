@@ -68,7 +68,7 @@ namespace DungeonExplorer
 
             if (lostHall != null)
             {
-                Encounters.Encounter.FirstEncounter(); // Call FirstEncounter from Encounters class
+                Encounter.FirstEncounter(); // Call FirstEncounter from Encounters class
                 lostHall.Enter();
             }
             else

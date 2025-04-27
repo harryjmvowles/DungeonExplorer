@@ -279,6 +279,7 @@ namespace DungeonExplorer
                                 string otherRoomName = door.GetOtherSide(currentRoom.Name); // Get the other room using bidirectional link
                                 Room nextRoom = roomManager.GetOrCreateRoom(otherRoomName); // Load the other room
                                 currentPlayer.CurrentRoom = nextRoom;
+                                Encounter.BasicEncounter(); // Start a basic encounter
                                 nextRoom.Enter();
                             }
                         }
@@ -308,6 +309,7 @@ namespace DungeonExplorer
                     string otherRoomName = door.GetOtherSide(currentRoom.Name); // Get the other room using bidirectional link
                     Room nextRoom = roomManager.GetOrCreateRoom(otherRoomName); // Load the other room
                     currentPlayer.CurrentRoom = nextRoom;
+                    Encounter.BasicEncounter(); // Start a basic encounter
                     nextRoom.Enter();
                 }
             }
