@@ -15,70 +15,71 @@ namespace DungeonExplorer
         public RoomManager()
         {
             predefinedRooms = new Dictionary<string, Room>();
-
             // Create rooms
             predefinedRooms.Add("The Lost Hall", new Room("The Lost Hall", "A dark room with decaying stone walls and a rotten wooden floor.",
-                new List<string> { },
+                new List<Item> { },
                 new Dictionary<string, PointOfInterest> {
-                { "Desk", new PointOfInterest("Desk", "A sturdy wooden desk with a drawer.", new List<Item> { new Key() }) },
-                { "Chest", new PointOfInterest("Chest", "An old chest with rusted hinges.", new List<Item> { new Potion() }) }
+        { "Desk", new PointOfInterest("Desk", "A sturdy wooden desk with a drawer.", new List<Item> { new Key() }) },
+        { "Chest", new PointOfInterest("Chest", "An old chest with rusted hinges.", new List<Item> { new Potion() }) }
                 }, new Dictionary<string, Door>()));
 
             predefinedRooms.Add("The Forgotten Chamber", new Room("The Forgotten Chamber", "A musty chamber filled with the scent of mildew...",
-                new List<string> { },
+                 new List<Item> { },
                 new Dictionary<string, PointOfInterest> {
-                { "Bookshelf", new PointOfInterest("Bookshelf", "A dusty bookshelf covered in cobwebs.", new List<Item> { new Armor("Leather Armor", 3) }) },
-                { "Statue", new PointOfInterest("Statue", "A broken statue missing its head.", new List<Item> { new Key() }) }
+        { "Bookshelf", new PointOfInterest("Bookshelf", "A dusty bookshelf covered in cobwebs.", new List<Item> { ItemDatabase.Items["Leather Armor"] }) },
+        { "Statue", new PointOfInterest("Statue", "A broken statue missing its head.", new List<Item> { new Key() }) }
                 }, new Dictionary<string, Door>()));
 
             predefinedRooms.Add("The Silent Corridor", new Room("The Silent Corridor", "A narrow hallway filled with an eerie silence.",
-                new List<string> { },
+                new List<Item> { },
                 new Dictionary<string, PointOfInterest> {
-                { "Portrait", new PointOfInterest("Portrait", "A faded painting of an unknown noble.", new List<Item> { new Weapon("Rusty Sword", 5) }) },
-                { "Candles", new PointOfInterest("Candles", "A few candles flicker weakly.", new List<Item> { new Key() }) }
+        { "Portrait", new PointOfInterest("Portrait", "A faded painting of an unknown noble.", new List<Item> { ItemDatabase.Items["Rusty Sword"] }) },
+        { "Candles", new PointOfInterest("Candles", "A few candles flicker weakly.", new List<Item> { new Key() }) }
                 }, new Dictionary<string, Door>()));
 
             predefinedRooms.Add("The Grand Hall", new Room("The Grand Hall", "A majestic hall with towering stone pillars.",
-                new List<string> { "" },
+                new List<Item> { },
                 new Dictionary<string, PointOfInterest> {
-                { "Throne", new PointOfInterest("Throne", "An ancient throne encrusted with faded jewels.", new List<Item> { new Armor("Chainmail Armor", 6) }) },
-                { "Pillars", new PointOfInterest("Pillars", "Massive cracked pillars line the hall.", new List<Item> { new Potion() }) }
+        { "Throne", new PointOfInterest("Throne", "An ancient throne encrusted with faded jewels.", new List<Item> { ItemDatabase.Items["Chainmail Armor"] }) },
+        { "Pillars", new PointOfInterest("Pillars", "Massive cracked pillars line the hall.", new List<Item> { new Potion() }) }
                 }, new Dictionary<string, Door>()));
 
             predefinedRooms.Add("The Dark Vault", new Room("The Dark Vault", "A dimly lit, claustrophobic room with thick air.",
-                new List<string> { },
+                new List<Item> { },
                 new Dictionary<string, PointOfInterest> {
-                { "Vault", new PointOfInterest("Vault", "A heavy metal vault door slightly ajar.", new List<Item> { new Key() }) },
-                { "Safe", new PointOfInterest("Safe", "A small rusted safe hidden behind a wall panel.", new List<Item> { new Weapon("Battle Axe", 10) }) }
+        { "Vault", new PointOfInterest("Vault", "A heavy metal vault door slightly ajar.", new List<Item> { new Key() }) },
+        { "Safe", new PointOfInterest("Safe", "A small rusted safe hidden behind a wall panel.", new List<Item> { ItemDatabase.Items["Battle Axe"] }) }
                 }, new Dictionary<string, Door>()));
 
             predefinedRooms.Add("The Abandoned Workshop", new Room("The Abandoned Workshop", "A workshop littered with shattered tools and broken dreams.",
-                new List<string> { },
+                new List<Item> { },
                 new Dictionary<string, PointOfInterest> {
-                { "Workbench", new PointOfInterest("Workbench", "A cluttered workbench with strange tools.", new List<Item> { new Armor("Dragon Scale Armor", 10) }) },
-                { "Toolbox", new PointOfInterest("Toolbox", "An old toolbox missing its handle.", new List<Item> { new Potion() }) }
+        { "Workbench", new PointOfInterest("Workbench", "A cluttered workbench with strange tools.", new List<Item> { ItemDatabase.Items["Dragon Scale Armor"] }) },
+        { "Toolbox", new PointOfInterest("Toolbox", "An old toolbox missing its handle.", new List<Item> { new Potion() }) }
                 }, new Dictionary<string, Door>()));
 
             predefinedRooms.Add("The Wretched Tomb", new Room("The Wretched Tomb", "A dark tomb filled with a heavy sense of loss.",
-                new List<string> { },
+                new List<Item> { },
                 new Dictionary<string, PointOfInterest> {
-                { "Coffin", new PointOfInterest("Coffin", "An ancient coffin sealed with wax.", new List<Item> { new Key() }) },
-                { "Skull", new PointOfInterest("Skull", "A lone skull resting atop a cracked pedestal.", new List<Item> { new Weapon("Enchanted Dagger", 8) }) }
+        { "Coffin", new PointOfInterest("Coffin", "An ancient coffin sealed with wax.", new List<Item> { new Key() }) },
+        { "Skull", new PointOfInterest("Skull", "A lone skull resting atop a cracked pedestal.", new List<Item> { ItemDatabase.Items["Enchanted Dagger"] }) }
                 }, new Dictionary<string, Door>()));
 
             predefinedRooms.Add("The Forgotten Passage", new Room("The Forgotten Passage", "A dark, narrow passage that seems endless.",
-                new List<string> { },
+                new List<Item> { },
                 new Dictionary<string, PointOfInterest> {
-                { "Dead End", new PointOfInterest("Dead End", "A stone wall blocking your way.", new List<Item>()) }
+        { "Dead End", new PointOfInterest("Dead End", "A stone wall blocking your way.", new List<Item>()) }
                 }, new Dictionary<string, Door>()));
 
             predefinedRooms.Add("The Escape Room", new Room("The Escape Room", "A brightly lit room signaling freedom.",
-                new List<string> { "" },
+                new List<Item> { },
                 new Dictionary<string, PointOfInterest> {
-                { "Exit Door", new PointOfInterest("Exit Door", "A massive reinforced door that leads outside.", new List<Item> { new Key() }) }
+        { "Exit Door", new PointOfInterest("Exit Door", "A massive reinforced door that leads outside.", new List<Item> { new Key() }) }
                 }, new Dictionary<string, Door>()));
-        }
 
+            // Initialize bidirectional doors
+            InitializeBidirectionalDoors();
+        }
         // Initialize and link bidirectional doors
         public void InitializeBidirectionalDoors()
         {
@@ -118,4 +119,5 @@ namespace DungeonExplorer
             return room;
         }
     }
+}
 

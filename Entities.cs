@@ -67,32 +67,21 @@ namespace DungeonExplorer
             _inventory = new List<Item>();
         }
 
-        // Modify the AddToInventory method
-        public void AddToInventory(string itemName)
+        // Better AddToInventory method
+        public void AddToInventory(Item item)
         {
-            if (ItemDatabase.Items.ContainsKey(itemName))
+            if (item is Weapon || item is Armor)
             {
-                Item item = ItemDatabase.Items[itemName];
-
-                if (item is Weapon || item is Armor)
-                {
-                    Inventory.Add(item);
-                    Console.WriteLine($"You picked up {itemName}!");
-                }
-                else
-                {
-                    Console.WriteLine("Unknown item.");
-                }
+                Inventory.Add(item);
+                Console.WriteLine($"You picked up {item.Name}!");
             }
-            else if (itemName == "Potion")
+            else if (item is Potion)
             {
-                AddPotion(1); // Correct!
-                Console.WriteLine("You picked up a Healing Potion!");
+                AddPotion(1);  
             }
-            else if (itemName == "Key")
+            else if (item is Key)
             {
-                AddKey(1); // Correct!
-                Console.WriteLine("You picked up a Key!");
+                AddKey(1);
             }
             else
             {
@@ -101,13 +90,10 @@ namespace DungeonExplorer
         }
 
 
-
-
-
         // Method to view player inventory (only weapons, armor)
         public void ViewInventory()
         {
-            Console.WriteLine($"Name: {Name}\nHealth: {Stats.Health}\nPotions: {_potions}\nKeys: {_keys}");
+            Console.WriteLine($"Name: {Name}\nHealth: {Stats.Health}\nDamage: {Stats.WeaponValue}\nDefense: {Stats.ArmorValue}\nPotions: {_potions}\nKeys: {_keys}");
             Console.WriteLine("Inventory:");
             foreach (Item item in _inventory)
             {
@@ -174,6 +160,29 @@ namespace DungeonExplorer
 
 
             }
+        }
+
+        // Method to use a potion
+        public void UsePotion()
+        {
+            if (Potions > 0)
+            {
+                Potions--;
+                Stats.Health += 25;
+                Console.WriteLine("You have used a potion. Your health has increased by 25.");
+            }
+            else
+            {
+                Console.WriteLine("You have no potions left.");
+            }
+        }
+
+        // Method to take damage
+        public void TakeDamage(int amount)
+        {
+            Stats.Health -= amount;
+            if (Stats.Health < 0)
+                Stats.Health = 0;
         }
     }
 }

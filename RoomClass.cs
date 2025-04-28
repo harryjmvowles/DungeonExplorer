@@ -19,17 +19,17 @@ namespace DungeonExplorer
         // Room properties
         public string Name;
         public string Description;
-        public List<string> Items;
+        public List<Item> Items;
         public Dictionary<string, PointOfInterest> PointsOfInterest;
         public Dictionary<string, Door> Exits;
         public bool BeenHere;
 
         // Room Constructor accepting PointsOfInterest and Exits
-        public Room(string name, string description, List<string> items, Dictionary<string, PointOfInterest> pointsOfInterest, Dictionary<string, Door> exits)
+        public Room(string name, string description, List<Item> items, Dictionary<string, PointOfInterest> pointsOfInterest, Dictionary<string, Door> exits)
         {
             Name = name;
             Description = description;
-            Items = items ?? new List<string>();
+            Items = new List<Item>();
             PointsOfInterest = pointsOfInterest;
             Exits = exits;
             BeenHere = false;
@@ -134,13 +134,13 @@ namespace DungeonExplorer
         }
 
         // Add an item to the room
-        public void AddItem(string item)
+        public void AddItem(Item item)
         {
             Items.Add(item);
         }
 
         // Remove an item from the room
-        public void RemoveItem(string item)
+        public void RemoveItem(Item item)
         {
             Items.Remove(item);
         }
@@ -148,7 +148,7 @@ namespace DungeonExplorer
         // Display the items in the room
         public void DisplayItems()
         {
-            var validItems = Items.Where(item => !string.IsNullOrWhiteSpace(item)).ToList(); // ignore empty or whitespace items
+            var validItems = Items.Where(item => item != null && !string.IsNullOrWhiteSpace(item.Name)).ToList(); // Ignore null or items without names
 
             if (validItems.Count == 0)
             {
@@ -156,17 +156,18 @@ namespace DungeonExplorer
             }
             else if (validItems.Count == 1)
             {
-                Console.WriteLine("Item in the room: " + validItems[0]); // Only one item in the room
+                Console.WriteLine("Item in the room: " + validItems[0].Name); // Only one item
             }
             else
             {
                 Console.WriteLine("Items in the room:");
-                foreach (string item in validItems)
+                foreach (Item item in validItems)
                 {
-                    Console.WriteLine("- " + item); // Display all items in the room
+                    Console.WriteLine("- " + item.Name); // Display the name of each item
                 }
             }
         }
+
 
         // Display points of interest (like Desk, Bookshelf, etc)
         public void DisplayPointsOfInterest()
@@ -189,9 +190,9 @@ namespace DungeonExplorer
             {
                 Console.WriteLine($"You interact with the {matchedPoiKey}. {point.Description}");
                 Console.WriteLine("Items here:");
-                foreach (string itemName in point.Items)
+                foreach (Item item in point.Items)
                 {
-                    Console.WriteLine($"- {itemName}");
+                    Console.WriteLine($"- {item.Name}");
                 }
 
                 Console.WriteLine("Would you like to pick up an item from here? (yes/no)");
@@ -202,29 +203,24 @@ namespace DungeonExplorer
                     Console.WriteLine("Which item would you like to pick up?");
                     string itemToPick = Console.ReadLine();
 
-                    string matchedItem = point.Items.FirstOrDefault(i => i.Equals(itemToPick, StringComparison.OrdinalIgnoreCase));
+                    Item matchedItem = point.Items.FirstOrDefault(i => i.Name.Equals(itemToPick, StringComparison.OrdinalIgnoreCase));
                     if (matchedItem != null)
                     {
-                        if (matchedItem.Equals("Key", StringComparison.OrdinalIgnoreCase))
+                        if (matchedItem is Key)
                         {
-                            currentPlayer.AddKey();  // Add key to the player directly
+                            currentPlayer.AddKey();
                         }
-                        else if (matchedItem.Equals("Healing Potion", StringComparison.OrdinalIgnoreCase))
+                        else if (matchedItem is Potion)
                         {
-                            currentPlayer.AddPotion();  // Add potion to the player directly
-                        }
-                        else if (ItemDatabase.Items.TryGetValue(matchedItem, out Item loadedItem))
-                        {
-                            currentPlayer.AddToInventory(loadedItem.Name);  // Add non-key/non-potion items to inventory
+                            currentPlayer.AddPotion();
                         }
                         else
                         {
-                            Console.WriteLine("Unknown item. Cannot pick up.");
-                            return;
+                            currentPlayer.AddToInventory(matchedItem); // Notice: passing the Item object!
                         }
 
-                        point.Items.Remove(matchedItem);  // Remove the item from the point of interest
-                        Console.WriteLine($"You pick up the {matchedItem}.");
+                        point.Items.Remove(matchedItem);
+                        Console.WriteLine($"You pick up the {matchedItem.Name}.");
                     }
                     else
                     {
@@ -239,7 +235,6 @@ namespace DungeonExplorer
         }
 
 
-        // Pick up an item from the room
         public void PickUpItem(string itemName, Player currentPlayer)
         {
             Item foundItem = Items.FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
@@ -251,18 +246,17 @@ namespace DungeonExplorer
                 Console.Clear();
                 Items.Remove(foundItem);
 
-                // Check if the item is a special item (like a key or potion) or a normal item
-                if (foundItem.Name.Equals("Key", StringComparison.OrdinalIgnoreCase))
+                if (foundItem is Key)
                 {
-                    currentPlayer.AddKey();  // Add key separately
+                    currentPlayer.AddKey();
                 }
-                else if (foundItem.Name.Equals("Healing Potion", StringComparison.OrdinalIgnoreCase))
+                else if (foundItem is Potion)
                 {
-                    currentPlayer.AddPotion();  // Add potion separately
+                    currentPlayer.AddPotion();
                 }
                 else
                 {
-                    currentPlayer.AddToInventory(foundItem.Name);  // Add regular items to inventory
+                    currentPlayer.AddToInventory(foundItem); // pass the Item object
                 }
             }
             else
@@ -272,10 +266,6 @@ namespace DungeonExplorer
                 Console.Clear();
             }
         }
-
-
-
-
 
 
         // Try a door method
