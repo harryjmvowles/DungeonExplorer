@@ -135,7 +135,8 @@ namespace DungeonExplorer
                     Console.WriteLine($"You deal {damage} damage to the {enemyObj.Name}.");
                     enemyObj.TakeDamage(damage);
 
-                    int eDamage = enemyObj.Stats.CalculateDamageTaken(player.Stats.WeaponValue, player.Stats.ArmorValue);
+                    int eDamage = enemyObj.Stats.CalculateDamage(player.Stats.ArmorValue, enemyObj.Stats.WeaponValue);
+
                     Console.WriteLine($"The {enemyObj.Name} strikes back at you for {eDamage} damage!");
                     player.TakeDamage(eDamage);
                 }

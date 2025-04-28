@@ -43,14 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Accessibility.cs" />
-    <Compile Include="CreatureClass.cs" />
+    <Compile Include="Entities.cs" />
     <Compile Include="EncountersClass.cs" />
     <Compile Include="Interfaces.cs" />
+    <Compile Include="InventoryLogic_Class.cs" />
     <Compile Include="StatisticsClass.cs" />
     <Compile Include="TestingClass.cs" />
     <Compile Include="DoorClass.cs" />
-    <Compile Include="PlayerClass.cs" />
     <Compile Include="PointsOfInterest_Class.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

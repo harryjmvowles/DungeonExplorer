@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static DungeonExplorer.Weapon;
 
 namespace DungeonExplorer
 {
@@ -186,11 +187,11 @@ namespace DungeonExplorer
             string matchedPoiKey = PointsOfInterest.Keys.FirstOrDefault(k => k.Equals(poiName, StringComparison.OrdinalIgnoreCase));
             if (matchedPoiKey != null && PointsOfInterest.TryGetValue(matchedPoiKey, out PointOfInterest point))
             {
-                Console.WriteLine($"You interact with the {matchedPoiKey}. {point.Description}"); // If the point of interest exists in the room
+                Console.WriteLine($"You interact with the {matchedPoiKey}. {point.Description}");
                 Console.WriteLine("Items here:");
-                foreach (var item in point.Items)
+                foreach (string itemName in point.Items)
                 {
-                    Console.WriteLine("- " + item);  // Display items in the point of interest
+                    Console.WriteLine($"- {itemName}");
                 }
 
                 Console.WriteLine("Would you like to pick up an item from here? (yes/no)");
@@ -198,16 +199,32 @@ namespace DungeonExplorer
                 if (choice == "yes")
                 {
                     Console.Clear();
-                    DisplayItems();
                     Console.WriteLine("Which item would you like to pick up?");
                     string itemToPick = Console.ReadLine();
-                    string foundItem = point.Items.FirstOrDefault(i => i.Equals(itemToPick, StringComparison.OrdinalIgnoreCase)); // Ignores case when comparing
 
-                    if (!string.IsNullOrEmpty(foundItem)) // If the item is in the point of interest
+                    string matchedItem = point.Items.FirstOrDefault(i => i.Equals(itemToPick, StringComparison.OrdinalIgnoreCase));
+                    if (matchedItem != null)
                     {
-                        Console.WriteLine($"You pick up the {foundItem}.");
-                        point.RemoveItem(foundItem);
-                        currentPlayer.AddToInventory(foundItem);
+                        if (matchedItem.Equals("Key", StringComparison.OrdinalIgnoreCase))
+                        {
+                            currentPlayer.AddKey();  // Add key to the player directly
+                        }
+                        else if (matchedItem.Equals("Healing Potion", StringComparison.OrdinalIgnoreCase))
+                        {
+                            currentPlayer.AddPotion();  // Add potion to the player directly
+                        }
+                        else if (ItemDatabase.Items.TryGetValue(matchedItem, out Item loadedItem))
+                        {
+                            currentPlayer.AddToInventory(loadedItem.Name);  // Add non-key/non-potion items to inventory
+                        }
+                        else
+                        {
+                            Console.WriteLine("Unknown item. Cannot pick up.");
+                            return;
+                        }
+
+                        point.Items.Remove(matchedItem);  // Remove the item from the point of interest
+                        Console.WriteLine($"You pick up the {matchedItem}.");
                     }
                     else
                     {
@@ -221,26 +238,45 @@ namespace DungeonExplorer
             }
         }
 
+
         // Pick up an item from the room
-        public void PickUpItem(string item, Player currentPlayer)
+        public void PickUpItem(string itemName, Player currentPlayer)
         {
-            string foundItem = Items.FirstOrDefault(i => i.Equals(item, StringComparison.OrdinalIgnoreCase));  // Ignores case when comparing
-            if (!string.IsNullOrEmpty(foundItem))
+            Item foundItem = Items.FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
+            if (foundItem != null)
             {
-                Console.WriteLine($"You pick up the {foundItem}."); // If the item is in the room
+                Console.WriteLine($"You pick up the {foundItem.Name}.");
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
                 Console.Clear();
                 Items.Remove(foundItem);
-                currentPlayer.AddToInventory(foundItem);
+
+                // Check if the item is a special item (like a key or potion) or a normal item
+                if (foundItem.Name.Equals("Key", StringComparison.OrdinalIgnoreCase))
+                {
+                    currentPlayer.AddKey();  // Add key separately
+                }
+                else if (foundItem.Name.Equals("Healing Potion", StringComparison.OrdinalIgnoreCase))
+                {
+                    currentPlayer.AddPotion();  // Add potion separately
+                }
+                else
+                {
+                    currentPlayer.AddToInventory(foundItem.Name);  // Add regular items to inventory
+                }
             }
             else
             {
-                Console.WriteLine("That item is not in the room."); // If the item is not in the room
+                Console.WriteLine("That item is not in the room.");
                 Console.ReadKey();
                 Console.Clear();
             }
         }
+
+
+
+
+
 
         // Try a door method
         public void TryDoor(Player currentPlayer, RoomManager roomManager)
