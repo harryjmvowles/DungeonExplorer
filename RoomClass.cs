@@ -128,6 +128,8 @@ namespace DungeonExplorer
                         break;
                     default:
                         Console.WriteLine("Invalid command. Please try again.");
+                        Console.WriteLine("Press any key to continue...");
+                        Console.Clear();
                         break;
                 }
             } while (command != "6");  // Exit the room loop when the player chooses to leave
@@ -312,6 +314,8 @@ namespace DungeonExplorer
             }
 
             Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
         }
 
 
@@ -360,18 +364,24 @@ namespace DungeonExplorer
                         {
                             Console.WriteLine("You have no keys.");
                             Console.WriteLine("Press any key to continue...");
+                            Console.ReadKey();
+                            Console.Clear();
                         }
                     }
                     else
                     {
                         Console.WriteLine("You back away from the door. (No or Incorrect Input)");
                         Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey();
+                        Console.Clear();
                     }
                 }
                 else
                 {
                     Console.WriteLine("You open the door...");
                     Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    Console.Clear();
 
                     string otherRoomName = door.GetOtherSide(currentRoom.Name); // Get the other room using bidirectional link
                     Room nextRoom = roomManager.GetOrCreateRoom(otherRoomName); // Load the other room

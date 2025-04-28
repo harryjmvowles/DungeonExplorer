@@ -201,7 +201,6 @@ namespace DungeonExplorer
             }
         }
 
-        // Method to sort the inventory
         public void SortInventory()
         {
             Console.Clear();
@@ -223,6 +222,7 @@ namespace DungeonExplorer
                     // Alphabetically sort the entire inventory by item name
                     _inventory.Sort((item1, item2) => item1.Name.CompareTo(item2.Name));
                     Console.WriteLine("Inventory sorted alphabetically.");
+                    DisplayItems(); // Display the sorted items
                     break;
 
                 case "2":
@@ -231,7 +231,7 @@ namespace DungeonExplorer
                                              .OrderByDescending(w => w.AttackPower)
                                              .ToList();
                     Console.WriteLine("Weapons sorted by strength (strongest first).");
-                    DisplayItems(weapons.Cast<Item>().ToList()); // Convert to List<Item>
+                    DisplayItemsWithWeaponValue(weapons.Cast<Item>().ToList());  // Convert to List<Item> before displaying
                     break;
 
                 case "3":
@@ -240,21 +240,21 @@ namespace DungeonExplorer
                                           .OrderByDescending(a => a.ArmorValue)
                                           .ToList();
                     Console.WriteLine("Armor sorted by strength (strongest first).");
-                    DisplayItems(armor.Cast<Item>().ToList()); // Convert to List<Item>
+                    DisplayItemsWithArmorValue(armor.Cast<Item>().ToList());  // Convert to List<Item> before displaying
                     break;
 
                 case "4":
                     // Filter and display only weapons
                     var filteredWeapons = _inventory.OfType<Weapon>().ToList();
                     Console.WriteLine("Filtered weapons:");
-                    DisplayItems(filteredWeapons.Cast<Item>().ToList()); // Convert to List<Item>
+                    DisplayItemsWithWeaponValue(filteredWeapons.Cast<Item>().ToList());  // Convert to List<Item> before displaying
                     break;
 
                 case "5":
                     // Filter and display only armor
                     var filteredArmor = _inventory.OfType<Armor>().ToList();
                     Console.WriteLine("Filtered armor:");
-                    DisplayItems(filteredArmor.Cast<Item>().ToList()); // Convert to List<Item>
+                    DisplayItemsWithArmorValue(filteredArmor.Cast<Item>().ToList());  // Convert to List<Item> before displaying
                     break;
 
                 case "6":
@@ -269,7 +269,40 @@ namespace DungeonExplorer
             Console.ReadKey();
         }
 
-        // Method to display items
+
+        // Method to display items with WeaponValue for weapons
+        public void DisplayItemsWithWeaponValue(List<Item> items)
+        {
+            foreach (var item in items)
+            {
+                if (item is Weapon weapon)
+                {
+                    Console.WriteLine($"- {weapon.Name} (Weapon Power: {weapon.AttackPower})");
+                }
+                else
+                {
+                    Console.WriteLine($"- {item.Name}");
+                }
+            }
+        }
+
+        // Method to display items with ArmorValue for armor
+        public void DisplayItemsWithArmorValue(List<Item> items)
+        {
+            foreach (var item in items)
+            {
+                if (item is Armor armor)
+                {
+                    Console.WriteLine($"- {armor.Name} (Armor Value: {armor.ArmorValue})");
+                }
+                else
+                {
+                    Console.WriteLine($"- {item.Name}");
+                }
+            }
+        }
+
+        // Method to display all items
         public void DisplayItems(IEnumerable<Item> items = null)
         {
             if (items == null)
@@ -290,6 +323,8 @@ namespace DungeonExplorer
                 }
             }
         }
+
+
 
         // Add potion method (store potions separately)
         public void AddPotion(int amount = 1)
