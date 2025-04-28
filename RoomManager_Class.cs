@@ -8,9 +8,10 @@ using System.Diagnostics;
 
 namespace DungeonExplorer
 {
+    // RoomManager class to manage predefined rooms and their connections
     public class RoomManager
     {
-        private Dictionary<string, Room> predefinedRooms;
+        private Dictionary<string, Room> predefinedRooms; // Dictionary to store predefined rooms
 
         public RoomManager()
         {
@@ -80,7 +81,7 @@ namespace DungeonExplorer
             // Initialize bidirectional doors
             InitializeBidirectionalDoors();
         }
-        // Initialize and link bidirectional doors
+        // predefined Bidirectional doors
         public void InitializeBidirectionalDoors()
         {
             AddBidirectionalDoor("The Lost Hall", "North", "The Forgotten Chamber", "South", false); // unlocked
@@ -102,11 +103,13 @@ namespace DungeonExplorer
             predefinedRooms[roomB].Exits[dirB] = door;
         }
 
+        // Method to get a room by name
         public Room GetRoom(string name)
         {
             return predefinedRooms.TryGetValue(name, out var room) ? room : null;
         }
 
+        // Method to get or create a room
         public Room GetOrCreateRoom(string name)
         {
             if (Room.RoomCache.TryGetValue(name, out var existingRoom))

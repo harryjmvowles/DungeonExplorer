@@ -7,7 +7,6 @@ using static DungeonExplorer.Creature;
 
 namespace DungeonExplorer
 {
-
     internal class Encounter
     {
         static Random rand = new Random();
@@ -61,7 +60,7 @@ namespace DungeonExplorer
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
             Console.Clear();
-            Combat(false, "Skeleton", "Dagger", 40);
+            Combat(false, "Skeleton", "Dagger", 40); // Call the combat system with predefined enemy
         }
 
         // Random basic encounter with a 50% chance
@@ -75,15 +74,16 @@ namespace DungeonExplorer
             else
             {
                 Console.WriteLine("You have been detected, a creature approaches you!");
-                Combat(true, "", "", 0);
+                Combat(true, "", "", 0); // Call combat with a random enemy
             }
         }
 
-        // Handles combat
+        // Handles the combat process
         public static void Combat(bool random, string name, string weapon, int health)
         {
             IDamageable enemy;
 
+            // Create a random enemy or use predefined one based on input
             if (random)
             {
                 string randomName = GetName();
@@ -104,13 +104,16 @@ namespace DungeonExplorer
 
             Enemy enemyObj = enemy as Enemy;
 
+            // Display initial fight details
             Console.WriteLine($"You are now fighting a {enemyObj.Name}.");
             Console.WriteLine($"They wield a {enemyObj.Weapon}: {enemyObj.Stats.WeaponValue} Damage, with an armor value of {enemyObj.Stats.ArmorValue}.");
             Console.ReadKey();
 
+            // Start combat loop
             while (enemyObj.Stats.Health > 0 && GameManager.Instance.CurrentPlayer.Stats.Health > 0)
             {
                 Console.Clear();
+                // Display player and enemy stats
                 Console.WriteLine("Potions: " + GameManager.Instance.CurrentPlayer.Potions);
                 Console.WriteLine("Health: " + GameManager.Instance.CurrentPlayer.Stats.Health);
                 Console.WriteLine($"ATK: {GameManager.Instance.CurrentPlayer.Stats.WeaponValue}, DEF: {GameManager.Instance.CurrentPlayer.Stats.ArmorValue}");
@@ -124,28 +127,32 @@ namespace DungeonExplorer
 
                 var player = GameManager.Instance.CurrentPlayer;
 
+                // Handle attack move
                 if (move == "a")
                 {
-                    Console.WriteLine("You attack your enemy!");
+                    Console.WriteLine("You attack the enemy!");
                     int attack = rand.Next(0, player.Stats.WeaponValue + 1) + rand.Next(1, 4);
                     int damage = player.Stats.CalculateDamage(enemyObj.Stats.ArmorValue, attack);
 
+                    // Critical hit check
                     if (damage >= 15)
-                        Console.WriteLine("Critical Hit! You hit with great force!");
+                        Console.WriteLine("Critical hit! You strike with great force!");
                     else if (damage <= 5)
                         Console.WriteLine("Weak hit... barely a scratch.");
 
-                    Console.WriteLine($"You deal {damage} damage to the {enemyObj.Name}.");
+                    Console.WriteLine($"You deal {damage} damage to {enemyObj.Name}.");
                     enemyObj.TakeDamage(damage);
 
+                    // Enemy counterattack
                     int eDamage = enemyObj.Stats.CalculateDamage(player.Stats.ArmorValue, enemyObj.Stats.WeaponValue);
 
-                    Console.WriteLine($"The {enemyObj.Name} strikes back at you for {eDamage} damage!");
+                    Console.WriteLine($"{enemyObj.Name} strikes back for {eDamage} damage!");
                     player.TakeDamage(eDamage);
                 }
+                // Handle defend move
                 else if (move == "d")
                 {
-                    Console.WriteLine("You defend yourself against the enemy!");
+                    Console.WriteLine("You defend yourself against the enemy's attack!");
                     int attack = rand.Next(0, player.Stats.WeaponValue + 1);
                     int damage = (enemyObj.Stats.WeaponValue / 2) - player.Stats.ArmorValue;
                     if (damage < 0) damage = 0;
@@ -154,70 +161,71 @@ namespace DungeonExplorer
                     player.TakeDamage(damage);
                     enemyObj.TakeDamage(attack);
                 }
+                // Handle heal move
                 else if (move == "h")
                 {
                     if (player.Potions == 0)
                     {
+                        // No potions left, player takes damage
                         int damage = enemyObj.Stats.CalculateDamageTaken(player.Stats.WeaponValue, player.Stats.ArmorValue);
-                        Console.WriteLine("You go to grab a potion but there is none left! You can't heal...");
+                        Console.WriteLine("You try to heal, but you have no potions left!");
                         player.TakeDamage(damage);
-                        Console.WriteLine($"While you were distracted, the {enemyObj.Name} attacks! You lose {damage} health.");
+                        Console.WriteLine($"The {enemyObj.Name} attacks while you're distracted! You lose {damage} health.");
                     }
                     else
                     {
-                        Console.WriteLine("You grab a potion, drinking it as fast as you can during battle.");
+                        // Heal using potion
+                        Console.WriteLine("You drink a potion and regain some health.");
                         player.UsePotion();
                         Console.WriteLine($"You have {player.Potions} potions left.");
-                        Console.WriteLine($"You have {player.Stats.Health} Health.");
+                        Console.WriteLine($"You have {player.Stats.Health} health remaining.");
                     }
                 }
+                // Handle run move
                 else if (move == "r")
                 {
                     int chance = rand.Next(0, 2);
                     if (chance == 0)
                     {
-                        Console.WriteLine("You successfully escaped!");
-                        Console.WriteLine($"You have {GameManager.Instance.CurrentPlayer.Stats.Health} health remaining.");
-                        Console.WriteLine($"You have {GameManager.Instance.CurrentPlayer.Potions} potions left.");
+                        // Successful escape
+                        Console.WriteLine("You successfully escape!");
+                        Console.WriteLine($"You have {GameManager.Instance.CurrentPlayer.Stats.Health} health left.");
+                        Console.WriteLine($"You have {GameManager.Instance.CurrentPlayer.Potions} potions remaining.");
                         Console.WriteLine("Press any key to continue...");
                         Console.ReadKey();
                         return;
                     }
                     else
                     {
+                        // Failed escape, enemy counterattacks
                         int damage = enemyObj.Stats.CalculateDamageTaken(player.Stats.WeaponValue, player.Stats.ArmorValue);
-                        Console.WriteLine($"You failed to escape! The {enemyObj.Name} strikes you for {damage} damage!");
+                        Console.WriteLine($"You fail to escape! The {enemyObj.Name} attacks for {damage} damage!");
                         player.TakeDamage(damage);
                     }
                 }
                 else
                 {
-                    Console.WriteLine($"That is not a valid move. The {enemyObj.Name} looks at you confused.");
-                    Console.WriteLine("Please try again.");
+                    Console.WriteLine("That's not a valid move. Try again.");
                 }
 
                 Console.ReadKey();
             }
 
+            // End combat: check who won
             Console.Clear();
             if (enemyObj.Stats.Health <= 0)
             {
-                Console.WriteLine($"You have defeated the {enemyObj.Name}!");
-                Console.WriteLine($"You have {GameManager.Instance.CurrentPlayer.Stats.Health} health remaining.");
-                Console.WriteLine($"You have {GameManager.Instance.CurrentPlayer.Potions} potions left.");
+                Console.WriteLine($"You defeated the {enemyObj.Name}!");
+                Console.WriteLine($"You have {GameManager.Instance.CurrentPlayer.Stats.Health} health left.");
+                Console.WriteLine($"You have {GameManager.Instance.CurrentPlayer.Potions} potions remaining.");
                 Console.WriteLine("Press any key to continue...");
-               
             }
             else if (GameManager.Instance.CurrentPlayer.Stats.Health <= 0)
             {
-                Console.WriteLine("You have been slain...");
+                Console.WriteLine("You have been defeated...");
             }
             Console.ReadKey();
         }
-
-
-
-
 
         // Return weapon power based on weapon type
         public static int GetWeaponPower(string weapon)
@@ -232,11 +240,8 @@ namespace DungeonExplorer
             }
         }
     }
-
-
-
-
 }
 
-        
-    
+
+
+

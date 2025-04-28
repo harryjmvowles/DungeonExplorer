@@ -6,30 +6,32 @@ using System.Threading.Tasks;
 
 namespace DungeonExplorer
 {
+    // Represents an item that can be collected and used
     public abstract class Item : ICollectible
     {
-        public string Name { get; set; }
-        public bool IsEquipped { get; set; }
+        public string Name { get; set; } // Item's name
+        public bool IsEquipped { get; set; } // Whether the item is equipped
 
         public Item(string name)
         {
             Name = name;
-            IsEquipped = false; // Items are not equipped by default
+            IsEquipped = false; // Default to not equipped
         }
 
-        // Implement Collect method from ICollectible
+        // Default collect action
         public virtual void Collect(Player player)
         {
-            Console.WriteLine($"You collect {Name}. But it has no immediate effect.");
+            Console.WriteLine($"You collect {Name}. It has no immediate effect.");
         }
 
+        // Default use action
         public virtual void Use(Player player)
         {
-            Console.WriteLine($"You use {Name}, but it has no effect.");
+            Console.WriteLine($"You use {Name}, but nothing happens.");
         }
     }
 
-    // ItemDatabase with some predefined items
+    // Stores predefined items in the game
     public static class ItemDatabase
     {
         public static Dictionary<string, Item> Items = new Dictionary<string, Item>()
@@ -51,7 +53,7 @@ namespace DungeonExplorer
         };
     }
 
-    // Weapon class now implements ICollectible
+    // Represents a weapon item
     public class Weapon : Item
     {
         public int AttackPower { get; set; }
@@ -61,18 +63,19 @@ namespace DungeonExplorer
             AttackPower = attackPower;
         }
 
-        // Override Collect method from ICollectible
+        // Collect weapon and increase attack power
         public override void Collect(Player player)
         {
-            Console.WriteLine($"You collect the {Name}. Your attack power will increase by {AttackPower}.");
+            Console.WriteLine($"You collect the {Name}. Attack power increased by {AttackPower}.");
             player.Stats.WeaponValue += AttackPower;
         }
 
+        // Equip weapon to increase attack power
         public override void Use(Player player)
         {
             if (!IsEquipped)
             {
-                Console.WriteLine($"You equip the {Name}. Your attack power increases by {AttackPower}.");
+                Console.WriteLine($"You equip {Name}. Attack power increased.");
                 player.Stats.WeaponValue += AttackPower;
                 IsEquipped = true;
             }
@@ -83,7 +86,7 @@ namespace DungeonExplorer
         }
     }
 
-    // Armor class now implements ICollectible
+    // Represents an armor item
     public class Armor : Item
     {
         public int ArmorValue { get; set; }
@@ -93,18 +96,19 @@ namespace DungeonExplorer
             ArmorValue = armorValue;
         }
 
-        // Override Collect method from ICollectible
+        // Collect armor and increase defense
         public override void Collect(Player player)
         {
-            Console.WriteLine($"You collect the {Name}. Your armor value will increase by {ArmorValue}.");
+            Console.WriteLine($"You collect the {Name}. Armor value increased by {ArmorValue}.");
             player.Stats.ArmorValue += ArmorValue;
         }
 
+        // Equip armor to increase defense
         public override void Use(Player player)
         {
             if (!IsEquipped)
             {
-                Console.WriteLine($"You equip the {Name}. Your armor value increases by {ArmorValue}.");
+                Console.WriteLine($"You equip {Name}. Armor value increased.");
                 player.Stats.ArmorValue += ArmorValue;
                 IsEquipped = true;
             }
@@ -115,31 +119,31 @@ namespace DungeonExplorer
         }
     }
 
-    // Potion class now implements ICollectible
+    // Represents a potion item
     public class Potion : Item
     {
         public Potion() : base("Potion")
         {
         }
 
-        // Override Collect method from ICollectible
+        // Collect potion and add it to inventory
         public override void Collect(Player player)
         {
-            player.AddPotion(1);  // Adds a potion to the player's count
+            player.AddPotion(1);
         }
     }
 
-    // Key class now implements ICollectible
+    // Represents a key item
     public class Key : Item
     {
         public Key() : base("Key")
         {
         }
 
-        // Override Collect method from ICollectible
+        // Collect key and add it to inventory
         public override void Collect(Player player)
         {
-            player.AddKey(1);  // Adds a key to the player's key count
+            player.AddKey(1);
         }
     }
 }

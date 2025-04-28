@@ -269,7 +269,6 @@ namespace DungeonExplorer
             Console.ReadKey();
         }
 
-
         // Method to display items with WeaponValue for weapons
         public void DisplayItemsWithWeaponValue(List<Item> items)
         {
@@ -324,8 +323,6 @@ namespace DungeonExplorer
             }
         }
 
-
-
         // Add potion method (store potions separately)
         public void AddPotion(int amount = 1)
         {
@@ -365,8 +362,6 @@ namespace DungeonExplorer
             else
             {
                 Console.WriteLine("You have no keys left.");
-
-
             }
         }
 
@@ -398,6 +393,7 @@ namespace DungeonExplorer
                 Console.WriteLine($"Item {itemName} not found in inventory.");
             }
         }
+
         // Method to take damage
         public void TakeDamage(int amount)
         {
@@ -407,3 +403,4 @@ namespace DungeonExplorer
         }
     }
 }
+

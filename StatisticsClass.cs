@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace DungeonExplorer
 {
+    //Used to store player statistics and calculate damage
     public class Statistics
     {
         public int Health { get; set; }

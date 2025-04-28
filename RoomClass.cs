@@ -135,8 +135,6 @@ namespace DungeonExplorer
             } while (command != "6");  // Exit the room loop when the player chooses to leave
         }
 
-        
-
         // Add an item to the room
         public void AddItem(Item item)
         {
@@ -171,7 +169,6 @@ namespace DungeonExplorer
                 }
             }
         }
-
 
         // Display points of interest (like Desk, Bookshelf, etc)
         public void DisplayPointsOfInterest()
@@ -257,7 +254,6 @@ namespace DungeonExplorer
             }
         }
 
-
         // Method for picking up an item in the room (by number)
         public void PickUpItem(Player currentPlayer)
         {
@@ -317,7 +313,6 @@ namespace DungeonExplorer
             Console.ReadKey();
             Console.Clear();
         }
-
 
         // Try a door method
         public void TryDoor(Player currentPlayer, RoomManager roomManager)
@@ -398,7 +393,5 @@ namespace DungeonExplorer
                 Console.Clear();
             }
         }
-
     }
-
 }
