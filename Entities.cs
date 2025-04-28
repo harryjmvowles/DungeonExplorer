@@ -90,18 +90,123 @@ namespace DungeonExplorer
         }
 
 
-        // Method to view player inventory (only weapons, armor)
+        // Method to view player inventory with options
         public void ViewInventory()
         {
-            Console.WriteLine($"Name: {Name}\nHealth: {Stats.Health}\nDamage: {Stats.WeaponValue}\nDefense: {Stats.ArmorValue}\nPotions: {_potions}\nKeys: {_keys}");
-            Console.WriteLine("Inventory:");
-            foreach (Item item in _inventory)
+            while (true)  // Keep showing the inventory menu until the user chooses to continue
             {
-                string equippedStatus = item.IsEquipped ? " (Equipped)" : "";
-                Console.WriteLine($"- {item.Name}{equippedStatus}");
+                Console.Clear();
+                Console.WriteLine($"Name: {Name}\nHealth: {Stats.Health}\nDamage: {Stats.WeaponValue}\nDefense: {Stats.ArmorValue}\nPotions: {_potions}\nKeys: {_keys}");
+                Console.WriteLine("\nInventory:");
+                foreach (Item item in _inventory)
+                {
+                    string equippedStatus = item.IsEquipped ? " (Equipped)" : "";
+                    Console.WriteLine($"- {item.Name}{equippedStatus}");
+                }
+
+                // Display inventory management options
+                Console.WriteLine("\nWhat would you like to do?");
+                Console.WriteLine("1. Equip item");
+                Console.WriteLine("2. Unequip item");
+                Console.WriteLine("3. Sort inventory");
+                Console.WriteLine("4. Continue");
+
+                string input = Console.ReadLine();
+
+                switch (input)
+                {
+                    case "1":
+                        EquipItem();
+                        break;
+                    case "2":
+                        UnequipItem();
+                        break;
+                    case "3":
+                        SortInventory();
+                        break;
+                    case "4":
+                        return;  // Exit the loop and return to the game
+                    default:
+                        Console.WriteLine("Invalid option. Please choose a valid option.");
+                        break;
+                }
             }
-            Console.WriteLine("\nPress any key to continue...");
-            Console.ReadKey();
+        }
+
+        // Method to equip an item from the inventory
+        public void EquipItem()
+        {
+            Console.WriteLine("Enter the name of the item to equip:");
+            string itemName = Console.ReadLine();
+            var item = _inventory.FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
+
+            if (item != null && (item is Weapon || item is Armor))
+            {
+                // Check if the item is a weapon or armor and if something is already equipped
+                if (item is Weapon)
+                {
+                    // If a weapon is already equipped, unequip it first
+                    var currentWeapon = _inventory.FirstOrDefault(i => i is Weapon && i.IsEquipped);
+                    if (currentWeapon != null)
+                    {
+                        Console.WriteLine($"Unequipping {currentWeapon.Name}...");
+                        currentWeapon.IsEquipped = false;
+                        GameManager.Instance.CurrentPlayer.Stats.WeaponValue -= ((Weapon)currentWeapon).AttackPower;
+                    }
+
+                    item.Use(this);  // Equip the new weapon
+                }
+                else if (item is Armor)
+                {
+                    // If armor is already equipped, unequip it first
+                    var currentArmor = _inventory.FirstOrDefault(i => i is Armor && i.IsEquipped);
+                    if (currentArmor != null)
+                    {
+                        Console.WriteLine($"Unequipping {currentArmor.Name}...");
+                        currentArmor.IsEquipped = false;
+                        GameManager.Instance.CurrentPlayer.Stats.ArmorValue -= ((Armor)currentArmor).ArmorValue;
+                    }
+
+                    item.Use(this);  // Equip the new armor
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Item '{itemName}' is not a valid weapon or armor, or it is not in your inventory.");
+            }
+        }
+
+        // Method to unequip an item from the inventory
+        public void UnequipItem()
+        {
+            Console.WriteLine("Enter the name of the item to unequip:");
+            string itemName = Console.ReadLine();
+            var item = _inventory.FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
+
+            if (item != null && (item is Weapon || item is Armor) && item.IsEquipped)
+            {
+                item.IsEquipped = false;  // Mark the item as unequipped
+                if (item is Weapon weapon)
+                {
+                    GameManager.Instance.CurrentPlayer.Stats.WeaponValue -= weapon.AttackPower;
+                }
+                else if (item is Armor armor)
+                {
+                    GameManager.Instance.CurrentPlayer.Stats.ArmorValue -= armor.ArmorValue;
+                }
+                Console.WriteLine($"You have unequipped the {item.Name}.");
+            }
+            else
+            {
+                Console.WriteLine($"Item '{itemName}' is not equipped or it is not a valid weapon or armor.");
+            }
+        }
+
+        // Method to sort the inventory
+        public void SortInventory()
+        {
+            _inventory.Sort((item1, item2) => item1.Name.CompareTo(item2.Name));  // Alphabetical sorting
+            Console.WriteLine("Inventory sorted alphabetically.");
         }
 
         // Method to use an item (e.g., Equip a weapon, armor, or consume potions)

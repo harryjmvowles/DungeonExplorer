@@ -22,6 +22,23 @@ namespace DungeonExplorer
             Console.WriteLine($"You use {Name}, but it has no effect.");
         }
     }
+    public static class ItemDatabase
+    {
+        public static Dictionary<string, Item> Items = new Dictionary<string, Item>()
+        {
+            // Weapons
+            { "Rusty Sword", new Weapon("Rusty Sword", 5) },
+            { "Battle Axe", new Weapon("Battle Axe", 13) },
+            { "Enchanted Dagger", new Weapon("Enchanted Dagger", 10) },
+            { "Dagger", new Weapon("Dagger", 3) },
+
+            // Armors
+            { "Leather Armor", new Armor("Leather Armor", 3) },
+            { "Chainmail Armor", new Armor("Chainmail Armor", 6) },
+            { "Dragon Scale Armor", new Armor("Dragon Scale Armor", 10) },
+
+        };
+    }
 
     public class Weapon : Item
     {
@@ -71,23 +88,6 @@ namespace DungeonExplorer
         }
     }
 
-    public static class ItemDatabase
-    {
-        public static Dictionary<string, Item> Items = new Dictionary<string, Item>()
-        {
-            // Weapons
-            { "Rusty Sword", new Weapon("Rusty Sword", 5) },
-            { "Battle Axe", new Weapon("Battle Axe", 13) },
-            { "Enchanted Dagger", new Weapon("Enchanted Dagger", 10) },
-            { "Dagger", new Weapon("Dagger", 3) },
-
-            // Armors
-            { "Leather Armor", new Armor("Leather Armor", 3) },
-            { "Chainmail Armor", new Armor("Chainmail Armor", 6) },
-            { "Dragon Scale Armor", new Armor("Dragon Scale Armor", 10) },
-
-        };
-    }
     // Potion class
     public class Potion : Item
     {

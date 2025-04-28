@@ -67,7 +67,6 @@ namespace DungeonExplorer
             }
 
             Console.WriteLine("");
-            Console.WriteLine("             ----                ");
             Console.WriteLine("");
             ProcessRoomActions(GameManager.Instance.CurrentPlayer);
         }
@@ -79,7 +78,7 @@ namespace DungeonExplorer
             do
             {
                 // Show available actions + reshow description
-                Console.WriteLine("\nWhat would you like to do?\n");
+                Console.WriteLine(" ______  __  __  ______  ______  ______  ______    \r\n/\\  ___\\/\\ \\_\\ \\/\\  __ \\/\\  __ \\/\\  ___\\/\\  ___\\   \r\n\\ \\ \\___\\ \\  __ \\ \\ \\/\\ \\ \\ \\/\\ \\ \\___  \\ \\  __\\   \r\n \\ \\_____\\ \\_\\ \\_\\ \\_____\\ \\_____\\/\\_____\\ \\_____\\ \r\n _\\/_____/\\/_/\\/_/\\/_____/\\/_____/\\/_____/\\/_____/ \r\n/\\  __ \\/\\  == \\/\\__  _\\/\\ \\/\\  __ \\/\\ \"-.\\ \\      \r\n\\ \\ \\/\\ \\ \\  _-/\\/_/\\ \\/\\ \\ \\ \\ \\/\\ \\ \\ \\-.  \\     \r\n \\ \\_____\\ \\_\\     \\ \\_\\ \\ \\_\\ \\_____\\ \\_\\\\\"\\_\\    \r\n  \\/_____/\\/_/      \\/_/  \\/_/\\/_____/\\/_/ \\/_/    \n");
                 Console.WriteLine("1. View Room description");
                 Console.WriteLine("2. View inventory/Health Status");
                 Console.WriteLine("3. Interact with a point of interest");
@@ -116,9 +115,8 @@ namespace DungeonExplorer
                         Console.Clear();
                         break;
                     case "4":
-                        Console.WriteLine("Which item would you like to pick up?");
-                        string item = Console.ReadLine();
-                        PickUpItem(item, currentPlayer);  // Pick up an item
+                        Console.Clear();
+                        PickUpItem(currentPlayer);  // Pick up an item (now displays list of items)
                         break;
                     case "5":
                         TryDoor(currentPlayer, GameManager.Instance.RoomManager);  // Try a door
@@ -134,6 +132,8 @@ namespace DungeonExplorer
                 }
             } while (command != "6");  // Exit the room loop when the player chooses to leave
         }
+
+        
 
         // Add an item to the room
         public void AddItem(Item item)
@@ -192,22 +192,40 @@ namespace DungeonExplorer
             {
                 Console.WriteLine($"You interact with the {matchedPoiKey}. {point.Description}");
                 Console.WriteLine("Items here:");
-                foreach (Item item in point.Items)
+
+                // Display a numbered list of items at the POI
+                for (int i = 0; i < point.Items.Count; i++)
                 {
-                    Console.WriteLine($"- {item.Name}");
+                    Console.WriteLine($"{i + 1}. {point.Items[i].Name}");
                 }
 
                 Console.WriteLine("Would you like to pick up an item from here? (yes/no)");
                 string choice = Console.ReadLine().ToLower();
                 if (choice == "yes")
                 {
-                    Console.Clear();
-                    Console.WriteLine("Which item would you like to pick up?");
-                    string itemToPick = Console.ReadLine();
+                    
+                    Console.WriteLine("Which item would you like to pick up? (Enter the number)");
 
-                    Item matchedItem = point.Items.FirstOrDefault(i => i.Name.Equals(itemToPick, StringComparison.OrdinalIgnoreCase));
+                    // Ensure player enters a valid number
+                    int itemIndex = -1;
+                    while (itemIndex < 0 || itemIndex >= point.Items.Count)
+                    {
+                        string input = Console.ReadLine();
+                        if (int.TryParse(input, out itemIndex) && itemIndex >= 1 && itemIndex <= point.Items.Count)
+                        {
+                            itemIndex--;  // Adjust index for zero-based list
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid number. Please choose a valid number from the list.");
+                        }
+                    }
+
+                    Item matchedItem = point.Items[itemIndex];
                     if (matchedItem != null)
                     {
+                        // Handle item pickup logic
                         if (matchedItem is Key)
                         {
                             currentPlayer.AddKey();
@@ -218,54 +236,93 @@ namespace DungeonExplorer
                         }
                         else
                         {
-                            currentPlayer.AddToInventory(matchedItem); // Notice: passing the Item object!
+                            currentPlayer.AddToInventory(matchedItem); // Add item to inventory
                         }
 
-                        point.Items.Remove(matchedItem);
+                        point.Items.Remove(matchedItem);  // Remove item from POI after pickup
+                        Console.WriteLine("press any key to continue...");
+
+
                     }
-                    else
-                    {
-                        Console.WriteLine("That item is not available at this point of interest.");
-                    }
+                }
+                else
+                {
+                    Console.WriteLine("You chose not to pick up any items.");
+                    Console.WriteLine("Press any key to continue...");
+                   
                 }
             }
             else
             {
                 Console.WriteLine("That point of interest doesn't exist in this room.");
-            }
-        }
-
-
-        public void PickUpItem(string itemName, Player currentPlayer)
-        {
-            Item foundItem = Items.FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
-            if (foundItem != null)
-            {
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
                 Console.Clear();
-                Items.Remove(foundItem);
+            }
+        }
 
-                if (foundItem is Key)
+
+
+        // Method for picking up an item in the room (by number)
+        public void PickUpItem(Player currentPlayer)
+        {
+            if (Items.Count == 0)
+            {
+                Console.WriteLine("There are no items in this room.");
+                return;
+            }
+
+            Console.WriteLine("Available items to pick up:");
+
+            // Display available items in the room with a number list
+            for (int i = 0; i < Items.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {Items[i].Name}");
+            }
+
+            // Ask the player which item they would like to pick up
+            Console.WriteLine("Enter the number of the item you want to pick up:");
+            int itemIndex = -1;
+
+            // Ensure player input is valid
+            while (itemIndex < 0 || itemIndex >= Items.Count)
+            {
+                string input = Console.ReadLine();
+                if (int.TryParse(input, out itemIndex) && itemIndex >= 1 && itemIndex <= Items.Count)
                 {
-                    currentPlayer.AddKey();
-                }
-                else if (foundItem is Potion)
-                {
-                    currentPlayer.AddPotion();
+                    itemIndex--; // Adjust for zero-based index
+                    break;
                 }
                 else
                 {
-                    currentPlayer.AddToInventory(foundItem); // pass the Item object
+                    Console.WriteLine("Invalid number. Please choose a valid item number from the list.");
                 }
+            }
+
+            Item selectedItem = Items[itemIndex];
+            Items.Remove(selectedItem);  // Remove item from room
+
+            Console.WriteLine($"You picked up {selectedItem.Name}.");
+
+            // Process the item (add to inventory, potion, key, etc.)
+            if (selectedItem is Key)
+            {
+                currentPlayer.AddKey();
+            }
+            else if (selectedItem is Potion)
+            {
+                currentPlayer.AddPotion();
             }
             else
             {
-                Console.WriteLine("That item is not in the room.");
-                Console.ReadKey();
-                Console.Clear();
+                currentPlayer.AddToInventory(selectedItem);  // Add other items to inventory
             }
+
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
         }
+
 
 
         // Try a door method

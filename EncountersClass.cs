@@ -177,6 +177,9 @@ namespace DungeonExplorer
                     if (chance == 0)
                     {
                         Console.WriteLine("You successfully escaped!");
+                        Console.WriteLine($"You have {GameManager.Instance.CurrentPlayer.Stats.Health} health remaining.");
+                        Console.WriteLine($"You have {GameManager.Instance.CurrentPlayer.Potions} potions left.");
+                        Console.WriteLine("Press any key to continue...");
                         Console.ReadKey();
                         return;
                     }
