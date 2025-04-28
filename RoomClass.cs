@@ -47,6 +47,7 @@ namespace DungeonExplorer
             if (!BeenHere)
             {
                 // Display the room details
+                Console.Clear();
                 Console.WriteLine("You enter a new room... it is " + Name);
                 Console.WriteLine(Description);
                 DisplayItems();
@@ -58,6 +59,7 @@ namespace DungeonExplorer
             else
             {
                 // Display a generic message
+                Console.Clear();
                 Console.WriteLine("You are back in the " + Name);
                 Console.WriteLine(Description);
                 DisplayItems();
@@ -220,7 +222,6 @@ namespace DungeonExplorer
                         }
 
                         point.Items.Remove(matchedItem);
-                        Console.WriteLine($"You pick up the {matchedItem.Name}.");
                     }
                     else
                     {
@@ -240,7 +241,6 @@ namespace DungeonExplorer
             Item foundItem = Items.FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
             if (foundItem != null)
             {
-                Console.WriteLine($"You pick up the {foundItem.Name}.");
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
                 Console.Clear();

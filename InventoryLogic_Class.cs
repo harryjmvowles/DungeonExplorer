@@ -36,7 +36,7 @@ namespace DungeonExplorer
         {
             if (!IsEquipped)
             {
-                Console.WriteLine($"You equip {Name}. Your attack power increases by {AttackPower}.");
+                Console.WriteLine($"You equip the {Name}. Your attack power increases by {AttackPower}.");
                 GameManager.Instance.CurrentPlayer.Stats.WeaponValue += AttackPower;
                 IsEquipped = true;
             }
@@ -60,7 +60,7 @@ namespace DungeonExplorer
         {
             if (!IsEquipped)
             {
-                Console.WriteLine($"You equip {Name}. Your armor value increases by {ArmorValue}.");
+                Console.WriteLine($"You equip the {Name}. Your armor value increases by {ArmorValue}.");
                 GameManager.Instance.CurrentPlayer.Stats.ArmorValue += ArmorValue;
                 IsEquipped = true;
             }
@@ -77,8 +77,9 @@ namespace DungeonExplorer
         {
             // Weapons
             { "Rusty Sword", new Weapon("Rusty Sword", 5) },
-            { "Battle Axe", new Weapon("Battle Axe", 10) },
-            { "Enchanted Dagger", new Weapon("Enchanted Dagger", 8) },
+            { "Battle Axe", new Weapon("Battle Axe", 13) },
+            { "Enchanted Dagger", new Weapon("Enchanted Dagger", 10) },
+            { "Dagger", new Weapon("Dagger", 3) },
 
             // Armors
             { "Leather Armor", new Armor("Leather Armor", 3) },

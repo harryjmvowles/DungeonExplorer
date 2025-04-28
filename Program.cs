@@ -66,6 +66,7 @@ namespace DungeonExplorer
             CurrentPlayer = new Player(playerName);
             Console.WriteLine($"'Well GoodLuck {CurrentPlayer.Name}!'\n'Take these.... You will need them.'");
             CurrentPlayer.AddPotion(2);
+            CurrentPlayer.AddToInventory(ItemDatabase.Items["Dagger"]);
             Console.WriteLine("Press Any Key to continue....");
             Console.ReadKey();
             Console.Clear();
@@ -73,6 +74,11 @@ namespace DungeonExplorer
             // Story intro
             Console.WriteLine("The mysterious man at the entrance of The Dungeon suddenly disappeared...");
             Console.WriteLine("You are now trapped in The Dungeon, a hall of the lost.... How will you escape?");
+            Console.WriteLine("Press Any Key to continue....");
+            Console.ReadKey();
+            Console.Clear();
+            Console.WriteLine("You feel deep in your gut that you are not alone in this dungeon... and equip your new Dagger just incase.");
+            CurrentPlayer.UseItem("Dagger");
             Console.WriteLine("Press Any Key to continue....");
             Console.ReadKey();
             Console.Clear();

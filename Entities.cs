@@ -73,7 +73,7 @@ namespace DungeonExplorer
             if (item is Weapon || item is Armor)
             {
                 Inventory.Add(item);
-                Console.WriteLine($"You picked up {item.Name}!");
+                Console.WriteLine($"You picked up a {item.Name}!");
             }
             else if (item is Potion)
             {

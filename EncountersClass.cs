@@ -55,8 +55,10 @@ namespace DungeonExplorer
         // First scripted encounter
         public static void FirstEncounter()
         {
-            Console.WriteLine("You enter the Dungeon, a creature stood in the corner of the dark lit room.");
-            Console.WriteLine("Unprepared for your journey, you only have a small dagger...");
+            Console.WriteLine("As you enter you realise your gut was right! A Creature stood in the corner of the dark lit room.");
+            Console.WriteLine("Thank the lord that mysterious man gave you a Dagger.");
+            Console.WriteLine("You have no choice but to fight... unless you can run!");
+            Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
             Console.Clear();
             Combat(false, "Skeleton", "Dagger", 40);
@@ -103,7 +105,7 @@ namespace DungeonExplorer
             Enemy enemyObj = enemy as Enemy;
 
             Console.WriteLine($"You are now fighting a {enemyObj.Name}.");
-            Console.WriteLine($"They wield a {enemyObj.Weapon} with an armor value of {enemyObj.Stats.ArmorValue}.");
+            Console.WriteLine($"They wield a {enemyObj.Weapon}: {enemyObj.Stats.WeaponValue} Damage, with an armor value of {enemyObj.Stats.ArmorValue}.");
             Console.ReadKey();
 
             while (enemyObj.Stats.Health > 0 && GameManager.Instance.CurrentPlayer.Stats.Health > 0)
@@ -111,6 +113,7 @@ namespace DungeonExplorer
                 Console.Clear();
                 Console.WriteLine("Potions: " + GameManager.Instance.CurrentPlayer.Potions);
                 Console.WriteLine("Health: " + GameManager.Instance.CurrentPlayer.Stats.Health);
+                Console.WriteLine($"ATK: {GameManager.Instance.CurrentPlayer.Stats.WeaponValue}, DEF: {GameManager.Instance.CurrentPlayer.Stats.ArmorValue}");
                 Console.WriteLine($"{enemyObj.Name} Health: {enemyObj.Stats.Health}");
                 Console.WriteLine("-------------------------");
                 Console.WriteLine("|  (A)ttack    (D)efend  |");
@@ -198,6 +201,9 @@ namespace DungeonExplorer
             {
                 Console.WriteLine($"You have defeated the {enemyObj.Name}!");
                 Console.WriteLine($"You have {GameManager.Instance.CurrentPlayer.Stats.Health} health remaining.");
+                Console.WriteLine($"You have {GameManager.Instance.CurrentPlayer.Potions} potions left.");
+                Console.WriteLine("Press any key to continue...");
+               
             }
             else if (GameManager.Instance.CurrentPlayer.Stats.Health <= 0)
             {
