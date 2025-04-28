@@ -10,5 +10,10 @@ namespace DungeonExplorer
     {
         void TakeDamage(int amount);
     }
+    public interface ICollectible
+    {
+        void Collect(Player player);
+    }
+    
 
 }

@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 using static DungeonExplorer.Weapon;
 
 
-
-// Creature Class
 namespace DungeonExplorer
 {
+    // Abstract Creature class, serves as base for Player and Enemy
     public abstract class Creature
     {
         public string Name { get; protected set; }
@@ -48,6 +47,8 @@ namespace DungeonExplorer
                 Stats.Health = 0;
         }
     }
+
+    // Player class
     public class Player : Creature, IDamageable
     {
         private int _potions = 0;
@@ -67,28 +68,26 @@ namespace DungeonExplorer
             _inventory = new List<Item>();
         }
 
-        // Better AddToInventory method
-        public void AddToInventory(Item item)
+        // Collect an item and add it to inventory
+        public void CollectItem(Item item)
         {
-            if (item is Weapon || item is Armor)
+            if (item is ICollectible collectible)
             {
-                Inventory.Add(item);
-                Console.WriteLine($"You picked up a {item.Name}!");
-            }
-            else if (item is Potion)
-            {
-                AddPotion(1);  
-            }
-            else if (item is Key)
-            {
-                AddKey(1);
+                collectible.Collect(this);  // Call Collect method from ICollectible
+                AddToInventory(item);  // Add the item to the inventory
             }
             else
             {
-                Console.WriteLine("Unknown item.");
+                Console.WriteLine("This item cannot be collected.");
             }
         }
 
+        // Add item to inventory
+        public void AddToInventory(Item item)
+        {
+            Inventory.Add(item);
+            Console.WriteLine($"You picked up a {item.Name}!");
+        }
 
         // Method to view player inventory with options
         public void ViewInventory()
@@ -205,21 +204,90 @@ namespace DungeonExplorer
         // Method to sort the inventory
         public void SortInventory()
         {
-            _inventory.Sort((item1, item2) => item1.Name.CompareTo(item2.Name));  // Alphabetical sorting
-            Console.WriteLine("Inventory sorted alphabetically.");
+            Console.Clear();
+            Console.WriteLine("Choose an option to sort your inventory:");
+
+            // List options for sorting
+            Console.WriteLine("1. Sort Alphabetically");
+            Console.WriteLine("2. Sort by Weapon Strength");
+            Console.WriteLine("3. Sort by Armor Strength");
+            Console.WriteLine("4. Filter by Weapons");
+            Console.WriteLine("5. Filter by Armor");
+            Console.WriteLine("6. Go Back");
+
+            string input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    // Alphabetically sort the entire inventory by item name
+                    _inventory.Sort((item1, item2) => item1.Name.CompareTo(item2.Name));
+                    Console.WriteLine("Inventory sorted alphabetically.");
+                    break;
+
+                case "2":
+                    // Sort weapons by attack power (strongest first)
+                    var weapons = _inventory.OfType<Weapon>()
+                                             .OrderByDescending(w => w.AttackPower)
+                                             .ToList();
+                    Console.WriteLine("Weapons sorted by strength (strongest first).");
+                    DisplayItems(weapons.Cast<Item>().ToList()); // Convert to List<Item>
+                    break;
+
+                case "3":
+                    // Sort armor by armor value (strongest first)
+                    var armor = _inventory.OfType<Armor>()
+                                          .OrderByDescending(a => a.ArmorValue)
+                                          .ToList();
+                    Console.WriteLine("Armor sorted by strength (strongest first).");
+                    DisplayItems(armor.Cast<Item>().ToList()); // Convert to List<Item>
+                    break;
+
+                case "4":
+                    // Filter and display only weapons
+                    var filteredWeapons = _inventory.OfType<Weapon>().ToList();
+                    Console.WriteLine("Filtered weapons:");
+                    DisplayItems(filteredWeapons.Cast<Item>().ToList()); // Convert to List<Item>
+                    break;
+
+                case "5":
+                    // Filter and display only armor
+                    var filteredArmor = _inventory.OfType<Armor>().ToList();
+                    Console.WriteLine("Filtered armor:");
+                    DisplayItems(filteredArmor.Cast<Item>().ToList()); // Convert to List<Item>
+                    break;
+
+                case "6":
+                    return;  // Exit the inventory sorting menu
+
+                default:
+                    Console.WriteLine("Invalid option. Please choose a valid option.");
+                    break;
+            }
+
+            Console.WriteLine("\nPress any key to continue...");
+            Console.ReadKey();
         }
 
-        // Method to use an item (e.g., Equip a weapon, armor, or consume potions)
-        public void UseItem(string itemName)
+        // Method to display items
+        public void DisplayItems(IEnumerable<Item> items = null)
         {
-            var item = _inventory.FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
-            if (item != null)
+            if (items == null)
             {
-                item.Use(this); // Call the specific Use method for the item
+                items = _inventory;  // If no list is passed, show the entire inventory
+            }
+
+            if (items.Count() == 0)
+            {
+                Console.WriteLine("No items to display.");
             }
             else
             {
-                Console.WriteLine($"Item {itemName} not found in inventory.");
+                foreach (Item item in items)
+                {
+                    string equippedStatus = item.IsEquipped ? " (Equipped)" : "";
+                    Console.WriteLine($"- {item.Name}{equippedStatus}");
+                }
             }
         }
 
@@ -282,6 +350,19 @@ namespace DungeonExplorer
             }
         }
 
+        // Method to use an item (e.g., Equip a weapon, armor, or consume potions)
+        public void UseItem(string itemName)
+        {
+            var item = _inventory.FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
+            if (item != null)
+            {
+                item.Use(this); // Call the specific Use method for the item
+            }
+            else
+            {
+                Console.WriteLine($"Item {itemName} not found in inventory.");
+            }
+        }
         // Method to take damage
         public void TakeDamage(int amount)
         {

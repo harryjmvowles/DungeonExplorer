@@ -203,7 +203,6 @@ namespace DungeonExplorer
                 string choice = Console.ReadLine().ToLower();
                 if (choice == "yes")
                 {
-                    
                     Console.WriteLine("Which item would you like to pick up? (Enter the number)");
 
                     // Ensure player enters a valid number
@@ -228,11 +227,11 @@ namespace DungeonExplorer
                         // Handle item pickup logic
                         if (matchedItem is Key)
                         {
-                            currentPlayer.AddKey();
+                            currentPlayer.AddKey(1);
                         }
                         else if (matchedItem is Potion)
                         {
-                            currentPlayer.AddPotion();
+                            currentPlayer.AddPotion(1);
                         }
                         else
                         {
@@ -240,27 +239,21 @@ namespace DungeonExplorer
                         }
 
                         point.Items.Remove(matchedItem);  // Remove item from POI after pickup
-                        Console.WriteLine("press any key to continue...");
-
-
+                        Console.WriteLine("Press any key to continue...");
                     }
                 }
                 else
                 {
                     Console.WriteLine("You chose not to pick up any items.");
                     Console.WriteLine("Press any key to continue...");
-                   
                 }
             }
             else
             {
                 Console.WriteLine("That point of interest doesn't exist in this room.");
                 Console.WriteLine("Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
             }
         }
-
 
 
         // Method for picking up an item in the room (by number)
@@ -307,11 +300,11 @@ namespace DungeonExplorer
             // Process the item (add to inventory, potion, key, etc.)
             if (selectedItem is Key)
             {
-                currentPlayer.AddKey();
+                currentPlayer.AddKey(1);
             }
             else if (selectedItem is Potion)
             {
-                currentPlayer.AddPotion();
+                currentPlayer.AddPotion(1);
             }
             else
             {
@@ -319,10 +312,7 @@ namespace DungeonExplorer
             }
 
             Console.WriteLine("Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
         }
-
 
 
         // Try a door method
@@ -370,24 +360,18 @@ namespace DungeonExplorer
                         {
                             Console.WriteLine("You have no keys.");
                             Console.WriteLine("Press any key to continue...");
-                            Console.ReadKey();
-                            Console.Clear();
                         }
                     }
                     else
                     {
                         Console.WriteLine("You back away from the door. (No or Incorrect Input)");
                         Console.WriteLine("Press any key to continue...");
-                        Console.ReadKey();
-                        Console.Clear();
                     }
                 }
                 else
                 {
                     Console.WriteLine("You open the door...");
                     Console.WriteLine("Press any key to continue...");
-                    Console.ReadKey();
-                    Console.Clear();
 
                     string otherRoomName = door.GetOtherSide(currentRoom.Name); // Get the other room using bidirectional link
                     Room nextRoom = roomManager.GetOrCreateRoom(otherRoomName); // Load the other room
@@ -404,6 +388,7 @@ namespace DungeonExplorer
                 Console.Clear();
             }
         }
+
     }
 
 }

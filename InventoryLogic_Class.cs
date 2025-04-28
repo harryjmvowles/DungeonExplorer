@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DungeonExplorer
 {
-    public abstract class Item
+    public abstract class Item : ICollectible
     {
         public string Name { get; set; }
         public bool IsEquipped { get; set; }
@@ -17,11 +17,19 @@ namespace DungeonExplorer
             IsEquipped = false; // Items are not equipped by default
         }
 
+        // Implement Collect method from ICollectible
+        public virtual void Collect(Player player)
+        {
+            Console.WriteLine($"You collect {Name}. But it has no immediate effect.");
+        }
+
         public virtual void Use(Player player)
         {
             Console.WriteLine($"You use {Name}, but it has no effect.");
         }
     }
+
+    // ItemDatabase with some predefined items
     public static class ItemDatabase
     {
         public static Dictionary<string, Item> Items = new Dictionary<string, Item>()
@@ -37,9 +45,13 @@ namespace DungeonExplorer
             { "Chainmail Armor", new Armor("Chainmail Armor", 6) },
             { "Dragon Scale Armor", new Armor("Dragon Scale Armor", 10) },
 
+            // Potions and Keys
+            { "Potion", new Potion() },
+            { "Key", new Key() }
         };
     }
 
+    // Weapon class now implements ICollectible
     public class Weapon : Item
     {
         public int AttackPower { get; set; }
@@ -49,12 +61,19 @@ namespace DungeonExplorer
             AttackPower = attackPower;
         }
 
+        // Override Collect method from ICollectible
+        public override void Collect(Player player)
+        {
+            Console.WriteLine($"You collect the {Name}. Your attack power will increase by {AttackPower}.");
+            player.Stats.WeaponValue += AttackPower;
+        }
+
         public override void Use(Player player)
         {
             if (!IsEquipped)
             {
                 Console.WriteLine($"You equip the {Name}. Your attack power increases by {AttackPower}.");
-                GameManager.Instance.CurrentPlayer.Stats.WeaponValue += AttackPower;
+                player.Stats.WeaponValue += AttackPower;
                 IsEquipped = true;
             }
             else
@@ -64,6 +83,7 @@ namespace DungeonExplorer
         }
     }
 
+    // Armor class now implements ICollectible
     public class Armor : Item
     {
         public int ArmorValue { get; set; }
@@ -73,12 +93,19 @@ namespace DungeonExplorer
             ArmorValue = armorValue;
         }
 
+        // Override Collect method from ICollectible
+        public override void Collect(Player player)
+        {
+            Console.WriteLine($"You collect the {Name}. Your armor value will increase by {ArmorValue}.");
+            player.Stats.ArmorValue += ArmorValue;
+        }
+
         public override void Use(Player player)
         {
             if (!IsEquipped)
             {
                 Console.WriteLine($"You equip the {Name}. Your armor value increases by {ArmorValue}.");
-                GameManager.Instance.CurrentPlayer.Stats.ArmorValue += ArmorValue;
+                player.Stats.ArmorValue += ArmorValue;
                 IsEquipped = true;
             }
             else
@@ -88,36 +115,31 @@ namespace DungeonExplorer
         }
     }
 
-    // Potion class
+    // Potion class now implements ICollectible
     public class Potion : Item
     {
         public Potion() : base("Potion")
         {
         }
 
-        public override void Use(Player player)
+        // Override Collect method from ICollectible
+        public override void Collect(Player player)
         {
-            player.AddPotion(1); // Adds a potion to the player's count
-            
+            player.AddPotion(1);  // Adds a potion to the player's count
         }
     }
 
-    // Key class
+    // Key class now implements ICollectible
     public class Key : Item
     {
         public Key() : base("Key")
         {
         }
 
-        public override void Use(Player player)
+        // Override Collect method from ICollectible
+        public override void Collect(Player player)
         {
-            player.AddKey(1); // Adds a key to the player's key count
-        
+            player.AddKey(1);  // Adds a key to the player's key count
         }
     }
-
-
-
-
-
 }
