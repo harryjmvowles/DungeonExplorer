@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,23 +31,105 @@ namespace DungeonExplorer
     // Enemy Class
     public class Enemy : Creature, IDamageable
     {
-        public string Weapon { get; private set; }
+        public string Weapon { get; protected set; }
 
-        // Enemy-specific constructor with weapon, armor, stats, etc.
         public Enemy(string name, int health, string weapon, int armorValue, int weaponValue)
             : base(name, health, armorValue, weaponValue)
         {
             Weapon = weapon;
         }
 
-        // Method to take damage
-        public void TakeDamage(int amount)
+        public virtual void TakeDamage(int amount)
         {
             Stats.Health -= amount;
             if (Stats.Health < 0)
                 Stats.Health = 0;
         }
+
+        public virtual void PerformSpecialAbility()
+        {
+            // Base enemies have no special abilities
+        }
     }
+
+    // BaseMonster (for custom behaviors)
+    public abstract class BaseMonster : Enemy
+    {
+        protected Random rand = new Random();
+
+        public BaseMonster(string name, int health, string weapon, int armorValue, int weaponValue)
+            : base(name, health, weapon, armorValue, weaponValue)
+        {
+        }
+
+        public abstract override void PerformSpecialAbility();
+    }
+
+    // Goblin: Weak but debuf dmg
+    public class GoblinMonster : BaseMonster
+    {
+        public GoblinMonster()
+            : base("Goblin", 35, "Dagger", 2, 10) { }
+
+        public override void PerformSpecialAbility()
+        {
+            Console.WriteLine("The Goblin throws dirt in your eyes! Your weapon damage drops slightly!");
+            GameManager.Instance.CurrentPlayer.Stats.WeaponValue -= 2;
+            if (GameManager.Instance.CurrentPlayer.Stats.WeaponValue < 5)
+                GameManager.Instance.CurrentPlayer.Stats.WeaponValue = 5;
+            Console.WriteLine($"Your weapon damage is now {GameManager.Instance.CurrentPlayer.Stats.WeaponValue}.");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+        }
+    }
+
+    // Troll: Regenerates health
+    public class TrollMonster : BaseMonster
+    {
+        public TrollMonster()
+            : base("Troll", 60, "Club", 3, 14) { }
+
+        public override void PerformSpecialAbility()
+        {
+            Console.WriteLine("The Troll regenerates some health!");
+            Stats.Health += 10;
+            if (Stats.Health > 60) Stats.Health = 60;
+            Console.WriteLine($"The Troll's health is now {Stats.Health}.");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+        }
+    }
+
+    // Demon: Reduces your armor temporarily
+    public class DemonMonster : BaseMonster
+    {
+        public DemonMonster()
+            : base("Demon", 50, "Fireball", 4, 16) { }
+
+        public override void PerformSpecialAbility()
+        {
+            Console.WriteLine("The Demon curses you! Your armor weakens!");
+            GameManager.Instance.CurrentPlayer.Stats.ArmorValue -= 2;
+            if (GameManager.Instance.CurrentPlayer.Stats.ArmorValue < 0)
+                GameManager.Instance.CurrentPlayer.Stats.ArmorValue = 0;
+            Console.WriteLine($"Your armor value is now {GameManager.Instance.CurrentPlayer.Stats.ArmorValue}.");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+        }
+    }
+
+    // Skeleton: No special powers, just basic
+    public class SkeletonMonster : BaseMonster
+    {
+        public SkeletonMonster()
+            : base("Skeleton", 40, "Rusty Sword", 3, 12) { }
+
+        public override void PerformSpecialAbility()
+        {
+            // Skeleton has no special ability
+        }
+    }
+
 
     // Player class
     public class Player : Creature, IDamageable
@@ -55,6 +138,13 @@ namespace DungeonExplorer
         private int _keys = 0;
         private List<Item> _inventory;  // Inventory for items like weapons, armor
         public Room CurrentRoom { get; set; }
+
+        // Golden Key
+        public bool HasGoldenKey { get; private set; } = false;
+
+        // Backup base stats to restore after combat
+        public int DefaultWeaponValue { get; private set; }
+        public int DefaultArmorValue { get; private set; }
 
         // Player-specific properties and getter/setter
         public int Potions { get => _potions; private set => _potions = value; }
@@ -66,15 +156,23 @@ namespace DungeonExplorer
             : base(name, health, armorValue, weaponValue)
         {
             _inventory = new List<Item>();
+            DefaultWeaponValue = weaponValue;
+            DefaultArmorValue = armorValue;
         }
 
-        // Collect an item and add it to inventory
+        public void AddGoldenKey()
+        {
+            HasGoldenKey = true;
+            Console.WriteLine("You now possess the Golden Key.");
+            Inventory.Add(new GoldenKey());
+        }
+
         public void CollectItem(Item item)
         {
             if (item is ICollectible collectible)
             {
-                collectible.Collect(this);  // Call Collect method from ICollectible
-                AddToInventory(item);  // Add the item to the inventory
+                collectible.Collect(this);
+                AddToInventory(item);
             }
             else
             {
@@ -82,17 +180,15 @@ namespace DungeonExplorer
             }
         }
 
-        // Add item to inventory
         public void AddToInventory(Item item)
         {
             Inventory.Add(item);
             Console.WriteLine($"You picked up a {item.Name}!");
         }
 
-        // Method to view player inventory with options
         public void ViewInventory()
         {
-            while (true)  // Keep showing the inventory menu until the user chooses to continue
+            while (true)
             {
                 Console.Clear();
                 Console.WriteLine($"Name: {Name}\nHealth: {Stats.Health}\nDamage: {Stats.WeaponValue}\nDefense: {Stats.ArmorValue}\nPotions: {_potions}\nKeys: {_keys}");
@@ -103,9 +199,8 @@ namespace DungeonExplorer
                     Console.WriteLine($"- {item.Name}{equippedStatus}");
                 }
 
-                // Display inventory management options
                 Console.WriteLine("\nWhat would you like to do?");
-                Console.WriteLine("1. Equip item");
+                Console.WriteLine("1. Equip/Use item");
                 Console.WriteLine("2. Unequip item");
                 Console.WriteLine("3. Sort inventory");
                 Console.WriteLine("4. Continue");
@@ -124,7 +219,7 @@ namespace DungeonExplorer
                         SortInventory();
                         break;
                     case "4":
-                        return;  // Exit the loop and return to the game
+                        return;
                     default:
                         Console.WriteLine("Invalid option. Please choose a valid option.");
                         break;
@@ -132,19 +227,16 @@ namespace DungeonExplorer
             }
         }
 
-        // Method to equip an item from the inventory
         public void EquipItem()
         {
             Console.WriteLine("Enter the name of the item to equip:");
             string itemName = Console.ReadLine();
             var item = _inventory.FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
 
-            if (item != null && (item is Weapon || item is Armor))
+            if (item != null && (item is Weapon || item is Armor || item is GoldenKey || item is Torch))
             {
-                // Check if the item is a weapon or armor and if something is already equipped
                 if (item is Weapon)
                 {
-                    // If a weapon is already equipped, unequip it first
                     var currentWeapon = _inventory.FirstOrDefault(i => i is Weapon && i.IsEquipped);
                     if (currentWeapon != null)
                     {
@@ -153,11 +245,10 @@ namespace DungeonExplorer
                         GameManager.Instance.CurrentPlayer.Stats.WeaponValue -= ((Weapon)currentWeapon).AttackPower;
                     }
 
-                    item.Use(this);  // Equip the new weapon
+                    item.Use(this);
                 }
                 else if (item is Armor)
                 {
-                    // If armor is already equipped, unequip it first
                     var currentArmor = _inventory.FirstOrDefault(i => i is Armor && i.IsEquipped);
                     if (currentArmor != null)
                     {
@@ -166,16 +257,26 @@ namespace DungeonExplorer
                         GameManager.Instance.CurrentPlayer.Stats.ArmorValue -= ((Armor)currentArmor).ArmorValue;
                     }
 
-                    item.Use(this);  // Equip the new armor
+                    item.Use(this);
                 }
+                else if (item is GoldenKey)
+                {
+                    { item.Use(this); }
+                    ;
+                }
+
+                else if (item is Torch)
+                {
+                    { item.Use(this); }
+                    ;
+                }
+
             }
             else
             {
                 Console.WriteLine($"Item '{itemName}' is not a valid weapon or armor, or it is not in your inventory.");
             }
         }
-
-        // Method to unequip an item from the inventory
         public void UnequipItem()
         {
             Console.WriteLine("Enter the name of the item to unequip:");
@@ -184,7 +285,7 @@ namespace DungeonExplorer
 
             if (item != null && (item is Weapon || item is Armor) && item.IsEquipped)
             {
-                item.IsEquipped = false;  // Mark the item as unequipped
+                item.IsEquipped = false;
                 if (item is Weapon weapon)
                 {
                     GameManager.Instance.CurrentPlayer.Stats.WeaponValue -= weapon.AttackPower;
@@ -206,7 +307,6 @@ namespace DungeonExplorer
             Console.Clear();
             Console.WriteLine("Choose an option to sort your inventory:");
 
-            // List options for sorting
             Console.WriteLine("1. Sort Alphabetically");
             Console.WriteLine("2. Sort by Weapon Strength");
             Console.WriteLine("3. Sort by Armor Strength");
@@ -219,46 +319,41 @@ namespace DungeonExplorer
             switch (input)
             {
                 case "1":
-                    // Alphabetically sort the entire inventory by item name
                     _inventory.Sort((item1, item2) => item1.Name.CompareTo(item2.Name));
                     Console.WriteLine("Inventory sorted alphabetically.");
-                    DisplayItems(); // Display the sorted items
+                    DisplayItems();
                     break;
 
                 case "2":
-                    // Sort weapons by attack power (strongest first)
                     var weapons = _inventory.OfType<Weapon>()
                                              .OrderByDescending(w => w.AttackPower)
                                              .ToList();
                     Console.WriteLine("Weapons sorted by strength (strongest first).");
-                    DisplayItemsWithWeaponValue(weapons.Cast<Item>().ToList());  // Convert to List<Item> before displaying
+                    DisplayItemsWithWeaponValue(weapons.Cast<Item>().ToList());
                     break;
 
                 case "3":
-                    // Sort armor by armor value (strongest first)
                     var armor = _inventory.OfType<Armor>()
                                           .OrderByDescending(a => a.ArmorValue)
                                           .ToList();
                     Console.WriteLine("Armor sorted by strength (strongest first).");
-                    DisplayItemsWithArmorValue(armor.Cast<Item>().ToList());  // Convert to List<Item> before displaying
+                    DisplayItemsWithArmorValue(armor.Cast<Item>().ToList());
                     break;
 
                 case "4":
-                    // Filter and display only weapons
                     var filteredWeapons = _inventory.OfType<Weapon>().ToList();
                     Console.WriteLine("Filtered weapons:");
-                    DisplayItemsWithWeaponValue(filteredWeapons.Cast<Item>().ToList());  // Convert to List<Item> before displaying
+                    DisplayItemsWithWeaponValue(filteredWeapons.Cast<Item>().ToList());
                     break;
 
                 case "5":
-                    // Filter and display only armor
                     var filteredArmor = _inventory.OfType<Armor>().ToList();
                     Console.WriteLine("Filtered armor:");
-                    DisplayItemsWithArmorValue(filteredArmor.Cast<Item>().ToList());  // Convert to List<Item> before displaying
+                    DisplayItemsWithArmorValue(filteredArmor.Cast<Item>().ToList());
                     break;
 
                 case "6":
-                    return;  // Exit the inventory sorting menu
+                    return;
 
                 default:
                     Console.WriteLine("Invalid option. Please choose a valid option.");
@@ -269,7 +364,6 @@ namespace DungeonExplorer
             Console.ReadKey();
         }
 
-        // Method to display items with WeaponValue for weapons
         public void DisplayItemsWithWeaponValue(List<Item> items)
         {
             foreach (var item in items)
@@ -285,7 +379,6 @@ namespace DungeonExplorer
             }
         }
 
-        // Method to display items with ArmorValue for armor
         public void DisplayItemsWithArmorValue(List<Item> items)
         {
             foreach (var item in items)
@@ -301,12 +394,11 @@ namespace DungeonExplorer
             }
         }
 
-        // Method to display all items
         public void DisplayItems(IEnumerable<Item> items = null)
         {
             if (items == null)
             {
-                items = _inventory;  // If no list is passed, show the entire inventory
+                items = _inventory;
             }
 
             if (items.Count() == 0)
@@ -323,13 +415,19 @@ namespace DungeonExplorer
             }
         }
 
-        // Add potion method (store potions separately)
         public void AddPotion(int amount = 1)
         {
             if (amount > 0)
             {
-                _potions += amount;
-                Console.WriteLine($"You have added {amount} potion(s) to your bag. You now have {_potions} potion(s).");
+                if (_potions < 6)
+                {
+                    _potions += amount;
+                    Console.WriteLine($"You have added {amount} potion(s) to your bag. You now have {_potions} potion(s).");
+                }
+                else
+                {
+                    Console.WriteLine("Can only hold 5 Potions in your bag.");
+                }
             }
             else
             {
@@ -337,7 +435,6 @@ namespace DungeonExplorer
             }
         }
 
-        // Method to add a key (store keys separately)
         public void AddKey(int amount = 1)
         {
             if (amount > 0)
@@ -351,7 +448,6 @@ namespace DungeonExplorer
             }
         }
 
-        // Method to use a key (stored separately)
         public void UseKey()
         {
             if (Keys > 0)
@@ -365,7 +461,6 @@ namespace DungeonExplorer
             }
         }
 
-        // Method to use a potion
         public void UsePotion()
         {
             if (Potions > 0)
@@ -380,13 +475,12 @@ namespace DungeonExplorer
             }
         }
 
-        // Method to use an item (e.g., Equip a weapon, armor, or consume potions)
         public void UseItem(string itemName)
         {
             var item = _inventory.FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
             if (item != null)
             {
-                item.Use(this); // Call the specific Use method for the item
+                item.Use(this);
             }
             else
             {
@@ -394,7 +488,6 @@ namespace DungeonExplorer
             }
         }
 
-        // Method to take damage
         public void TakeDamage(int amount)
         {
             Stats.Health -= amount;
@@ -402,5 +495,6 @@ namespace DungeonExplorer
                 Stats.Health = 0;
         }
     }
+
 }
 

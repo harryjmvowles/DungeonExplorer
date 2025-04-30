@@ -29,7 +29,7 @@ namespace DungeonExplorer
         {
             Name = name;
             Description = description;
-            Items = new List<Item>();
+            Items = items ?? new List<Item>();
             PointsOfInterest = pointsOfInterest;
             Exits = exits;
             BeenHere = false;
@@ -119,6 +119,7 @@ namespace DungeonExplorer
                         PickUpItem(currentPlayer);  // Pick up an item (now displays list of items)
                         break;
                     case "5":
+                        Console.Clear();
                         TryDoor(currentPlayer, GameManager.Instance.RoomManager);  // Try a door
                         break;
                     case "6":
@@ -183,16 +184,38 @@ namespace DungeonExplorer
             }
         }
 
-        // Interact with points of interest
         private void InteractWithPointOfInterest(string poiName, Player currentPlayer)
         {
             string matchedPoiKey = PointsOfInterest.Keys.FirstOrDefault(k => k.Equals(poiName, StringComparison.OrdinalIgnoreCase));
             if (matchedPoiKey != null && PointsOfInterest.TryGetValue(matchedPoiKey, out PointOfInterest point))
             {
                 Console.WriteLine($"You interact with the {matchedPoiKey}. {point.Description}");
-                Console.WriteLine("Items here:");
 
-                // Display a numbered list of items at the POI
+                // Special logic for Exit Door in Escape Room
+                if (matchedPoiKey.Equals("Exit Door", StringComparison.OrdinalIgnoreCase) && currentPlayer.CurrentRoom.Name == "The Escape Room")
+                {
+                    if (currentPlayer.HasGoldenKey)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("You insert the Golden Key into the Exit Door...");
+                        Console.WriteLine("The door creaks open and sunlight floods the room.");
+                        Console.WriteLine("Press any key to escape the dungeon...");
+                        Console.ReadKey();
+                        GameManager.GameOver(true); // Call GameOver method with true to indicate success
+                    }
+                    else
+                    {
+                        Console.WriteLine("The door is locked. It looks like it requires a special golden key...");
+                        Console.WriteLine("You need to find the Golden Key before you can escape.");
+                    }
+
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
+                    return;
+                }
+
+                // Display items at the POI
+                Console.WriteLine("Items here:");
                 for (int i = 0; i < point.Items.Count; i++)
                 {
                     Console.WriteLine($"{i + 1}. {point.Items[i].Name}");
@@ -204,14 +227,13 @@ namespace DungeonExplorer
                 {
                     Console.WriteLine("Which item would you like to pick up? (Enter the number)");
 
-                    // Ensure player enters a valid number
                     int itemIndex = -1;
                     while (itemIndex < 0 || itemIndex >= point.Items.Count)
                     {
                         string input = Console.ReadLine();
                         if (int.TryParse(input, out itemIndex) && itemIndex >= 1 && itemIndex <= point.Items.Count)
                         {
-                            itemIndex--;  // Adjust index for zero-based list
+                            itemIndex--;
                             break;
                         }
                         else
@@ -223,10 +245,13 @@ namespace DungeonExplorer
                     Item matchedItem = point.Items[itemIndex];
                     if (matchedItem != null)
                     {
-                        // Handle item pickup logic
                         if (matchedItem is Key)
                         {
                             currentPlayer.AddKey(1);
+                        }
+                        else if (matchedItem is GoldenKey)
+                        {
+                            currentPlayer.AddGoldenKey();
                         }
                         else if (matchedItem is Potion)
                         {
@@ -234,25 +259,29 @@ namespace DungeonExplorer
                         }
                         else
                         {
-                            currentPlayer.AddToInventory(matchedItem); // Add item to inventory
+                            currentPlayer.AddToInventory(matchedItem);
                         }
 
-                        point.Items.Remove(matchedItem);  // Remove item from POI after pickup
+                        point.Items.Remove(matchedItem);
                         Console.WriteLine("Press any key to continue...");
+                        Console.ReadKey();
                     }
                 }
                 else
                 {
                     Console.WriteLine("You chose not to pick up any items.");
                     Console.WriteLine("Press any key to continue...");
+                    Console.ReadKey();
                 }
             }
             else
             {
                 Console.WriteLine("That point of interest doesn't exist in this room.");
                 Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
             }
         }
+
 
         // Method for picking up an item in the room (by number)
         public void PickUpItem(Player currentPlayer)
@@ -292,8 +321,6 @@ namespace DungeonExplorer
 
             Item selectedItem = Items[itemIndex];
             Items.Remove(selectedItem);  // Remove item from room
-
-            Console.WriteLine($"You picked up {selectedItem.Name}.");
 
             // Process the item (add to inventory, potion, key, etc.)
             if (selectedItem is Key)

@@ -14,13 +14,16 @@ namespace DungeonExplorer
         {
             // Debug testing
 #if DEBUG
-        Testing.RunTests();
+            Tests.RunTests(); // Call tests here
 #endif
 
             // Start the game using GameManager
             GameManager.Instance.StartGame();
         }
     }
+
+
+
     class StringManipulator
     {
         //Turns first letter of string to uppercase.
@@ -95,6 +98,27 @@ namespace DungeonExplorer
             else
             {
                 Console.WriteLine("The Lost Hall room could not be found.");
+            }
+        }
+        public static void GameOver(bool won)
+        {
+            if (won == true)
+            {
+                Console.Clear();
+                Console.WriteLine("  /$$$$$$                                                     /$$    \r\n /$$__  $$                                                   | $$    \r\n| $$  \\__/  /$$$$$$  /$$$$$$$   /$$$$$$   /$$$$$$  /$$$$$$  /$$$$$$  \r\n| $$       /$$__  $$| $$__  $$ /$$__  $$ /$$__  $$|____  $$|_  $$_/  \r\n| $$      | $$  \\ $$| $$  \\ $$| $$  \\ $$| $$  \\__/ /$$$$$$$  | $$    \r\n| $$    $$| $$  | $$| $$  | $$| $$  | $$| $$      /$$__  $$  | $$ /$$\r\n|  $$$$$$/|  $$$$$$/| $$  | $$|  $$$$$$$| $$     |  $$$$$$$  |  $$$$/\r\n \\______/  \\______/ |__/  |__/ \\____  $$|__/      \\_______/   \\___/  \r\n                               /$$  \\ $$                             \r\n                              |  $$$$$$/                             \r\n                               \\______/                              \r\n           /$$             /$$     /$$                               \r\n          | $$            | $$    |__/                               \r\n /$$   /$$| $$  /$$$$$$  /$$$$$$   /$$  /$$$$$$  /$$$$$$$   /$$$$$$$ \r\n| $$  | $$| $$ |____  $$|_  $$_/  | $$ /$$__  $$| $$__  $$ /$$_____/ \r\n| $$  | $$| $$  /$$$$$$$  | $$    | $$| $$  \\ $$| $$  \\ $$|  $$$$$$  \r\n| $$  | $$| $$ /$$__  $$  | $$ /$$| $$| $$  | $$| $$  | $$ \\____  $$ \r\n|  $$$$$$/| $$|  $$$$$$$  |  $$$$/| $$|  $$$$$$/| $$  | $$ /$$$$$$$/ \r\n \\______/ |__/ \\_______/   \\___/  |__/ \\______/ |__/  |__/|_______/  ");
+                Console.WriteLine("You have completed the dungeon!");
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                Environment.Exit(0);
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine(" ██████╗  █████╗ ███╗   ███╗███████╗     \r\n██╔════╝ ██╔══██╗████╗ ████║██╔════╝     \r\n██║  ███╗███████║██╔████╔██║█████╗       \r\n██║   ██║██╔══██║██║╚██╔╝██║██╔══╝       \r\n╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗     \r\n ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝     \r\n ██████╗ ██╗   ██╗███████╗██████╗        \r\n██╔═══██╗██║   ██║██╔════╝██╔══██╗       \r\n██║   ██║██║   ██║█████╗  ██████╔╝       \r\n██║   ██║╚██╗ ██╔╝██╔══╝  ██╔══██╗       \r\n╚██████╔╝ ╚████╔╝ ███████╗██║  ██║       \r\n ╚═════╝   ╚═══╝  ╚══════╝╚═╝  ╚═╝       ");
+                Console.WriteLine("You have perished in the dungeon!");
+                Console.WriteLine("Press any key to exit...");
+                Console.ReadKey();
+                Environment.Exit(0);
             }
         }
     }

@@ -9,22 +9,20 @@ namespace DungeonExplorer
     // Represents an item that can be collected and used
     public abstract class Item : ICollectible
     {
-        public string Name { get; set; } // Item's name
-        public bool IsEquipped { get; set; } // Whether the item is equipped
+        public string Name { get; set; }
+        public bool IsEquipped { get; set; }
 
         public Item(string name)
         {
             Name = name;
-            IsEquipped = false; // Default to not equipped
+            IsEquipped = false;
         }
 
-        // Default collect action
         public virtual void Collect(Player player)
         {
             Console.WriteLine($"You collect {Name}. It has no immediate effect.");
         }
 
-        // Default use action
         public virtual void Use(Player player)
         {
             Console.WriteLine($"You use {Name}, but nothing happens.");
@@ -36,20 +34,21 @@ namespace DungeonExplorer
     {
         public static Dictionary<string, Item> Items = new Dictionary<string, Item>()
         {
-            // Weapons
             { "Rusty Sword", new Weapon("Rusty Sword", 5) },
             { "Battle Axe", new Weapon("Battle Axe", 13) },
             { "Enchanted Dagger", new Weapon("Enchanted Dagger", 10) },
             { "Dagger", new Weapon("Dagger", 3) },
+            { "Greatsword", new Weapon("Greatsword", 15) },
 
-            // Armors
             { "Leather Armor", new Armor("Leather Armor", 3) },
             { "Chainmail Armor", new Armor("Chainmail Armor", 6) },
             { "Dragon Scale Armor", new Armor("Dragon Scale Armor", 10) },
+            { "Steel Armor", new Armor("Steel Armor", 7) },
 
-            // Potions and Keys
             { "Potion", new Potion() },
-            { "Key", new Key() }
+            { "Key", new Key() },
+            { "Golden Key", new GoldenKey() },
+            { "Torch", new Torch() }
         };
     }
 
@@ -63,14 +62,12 @@ namespace DungeonExplorer
             AttackPower = attackPower;
         }
 
-        // Collect weapon and increase attack power
         public override void Collect(Player player)
         {
             Console.WriteLine($"You collect the {Name}. Attack power increased by {AttackPower}.");
             player.Stats.WeaponValue += AttackPower;
         }
 
-        // Equip weapon to increase attack power
         public override void Use(Player player)
         {
             if (!IsEquipped)
@@ -96,14 +93,12 @@ namespace DungeonExplorer
             ArmorValue = armorValue;
         }
 
-        // Collect armor and increase defense
         public override void Collect(Player player)
         {
             Console.WriteLine($"You collect the {Name}. Armor value increased by {ArmorValue}.");
             player.Stats.ArmorValue += ArmorValue;
         }
 
-        // Equip armor to increase defense
         public override void Use(Player player)
         {
             if (!IsEquipped)
@@ -122,11 +117,8 @@ namespace DungeonExplorer
     // Represents a potion item
     public class Potion : Item
     {
-        public Potion() : base("Potion")
-        {
-        }
+        public Potion() : base("Potion") { }
 
-        // Collect potion and add it to inventory
         public override void Collect(Player player)
         {
             player.AddPotion(1);
@@ -136,14 +128,49 @@ namespace DungeonExplorer
     // Represents a key item
     public class Key : Item
     {
-        public Key() : base("Key")
-        {
-        }
+        public Key() : base("Key") { }
 
-        // Collect key and add it to inventory
         public override void Collect(Player player)
         {
             player.AddKey(1);
+        }
+    }
+
+    // Represents a golden key
+    public class GoldenKey : Item
+    {
+        public GoldenKey() : base("Golden Key") { }
+
+        public override void Collect(Player player)
+        {
+            Console.WriteLine("You collect the Golden Key. It looks important...");
+            player.AddGoldenKey();
+        }
+
+        public override void Use(Player player)
+        {
+            Console.WriteLine("This key is different to the rest, it sings to you... guiding you through the rooms.");
+            Console.WriteLine("You feel a strange connection to the Golden Key. It might unlock something special.");
+            Console.WriteLine("press any key to continue...");
+            Console.ReadKey();
+        }
+    }
+
+    // Represents a torch
+    public class Torch : Item
+    {
+        public Torch() : base("Torch") { }
+
+        public override void Collect(Player player)
+        {
+            Console.WriteLine("You pick up the Torch. It lights your way in dark places.");
+        }
+
+        public override void Use(Player player)
+        {
+            Console.WriteLine("You hold up the Torch. It illuminates the area.");
+            Console.WriteLine("press any key to continue...");
+            Console.ReadKey();
         }
     }
 }
