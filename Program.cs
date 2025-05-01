@@ -23,7 +23,7 @@ namespace DungeonExplorer
     }
 
 
-
+    // StringManipulator class to manipulate strings
     class StringManipulator
     {
         //Turns first letter of string to uppercase.
@@ -35,6 +35,7 @@ namespace DungeonExplorer
             return char.ToUpper(input[0]) + input.Substring(1);
         }
     }
+    // GameManager class to manage game state and player
     public class GameManager
     {
         private static GameManager instance;
@@ -48,6 +49,7 @@ namespace DungeonExplorer
             RoomManager = new RoomManager();
         }
 
+        // Start the game method
         public void StartGame()
         {
             Console.WriteLine(" /============================================================================\\ \r\n ||                                                                          || \r\n ||                                                                          || \r\n ||                                                                          || \r\n ||                                                                          || \r\n ||                                                                          || \r\n ||                         ████████╗██╗  ██╗███████╗                        || \r\n ||                         ╚══██╔══╝██║  ██║██╔════╝                        || \r\n ||                            ██║   ███████║█████╗                          || \r\n ||                            ██║   ██╔══██║██╔══╝                          || \r\n ||                            ██║   ██║  ██║███████╗                        || \r\n ||                            ╚═╝   ╚═╝  ╚═╝╚══════╝                        || \r\n ||                                                                          || \r\n ||     ██████╗ ██╗   ██╗███╗   ██╗ ██████╗ ███████╗ ██████╗ ███╗   ██╗      || \r\n ||     ██╔══██╗██║   ██║████╗  ██║██╔════╝ ██╔════╝██╔═══██╗████╗  ██║      || \r\n ||     ██║  ██║██║   ██║██╔██╗ ██║██║  ███╗█████╗  ██║   ██║██╔██╗ ██║      || \r\n ||     ██║  ██║██║   ██║██║╚██╗██║██║   ██║██╔══╝  ██║   ██║██║╚██╗██║      || \r\n ||     ██████╔╝╚██████╔╝██║ ╚████║╚██████╔╝███████╗╚██████╔╝██║ ╚████║      || \r\n ||     ╚═════╝  ╚═════╝ ╚═╝  ╚═══╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝      || \r\n ||                                                                          || \r\n ||                      PRESS ANY KEY TO CONTINUE■■■■                       || \r\n ||                                                                          || \r\n ||                                                                          || \r\n ||                                                                          || \r\n \\============================================================================/ ");
@@ -100,6 +102,8 @@ namespace DungeonExplorer
                 Console.WriteLine("The Lost Hall room could not be found.");
             }
         }
+
+        // Game over method
         public static void GameOver(bool won)
         {
             if (won == true)

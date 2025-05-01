@@ -116,7 +116,7 @@ namespace DungeonExplorer
                         break;
                     case "4":
                         Console.Clear();
-                        PickUpItem(currentPlayer);  // Pick up an item (now displays list of items)
+                        PickUpItem(currentPlayer);  // Pick up an item 
                         break;
                     case "5":
                         Console.Clear();

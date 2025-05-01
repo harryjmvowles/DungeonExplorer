@@ -90,6 +90,7 @@ namespace DungeonExplorer
                 Console.WriteLine("Make your move! Enter A, D, R, or H:");
                 string move = Console.ReadLine().ToLower();
 
+                //attack
                 if (move == "a")
                 {
                     Console.WriteLine("You attack the enemy!");
@@ -115,6 +116,7 @@ namespace DungeonExplorer
                         monster.PerformSpecialAbility();
                     }
                 }
+                //defend
                 else if (move == "d")
                 {
                     Console.WriteLine("You brace for the incoming attack!");
@@ -129,6 +131,7 @@ namespace DungeonExplorer
                     player.TakeDamage(reducedDamage);
                     enemyObj.TakeDamage(counterAttack);
                 }
+                //heal
                 else if (move == "h")
                 {
                     if (player.Potions == 0)
@@ -146,6 +149,7 @@ namespace DungeonExplorer
                         Console.WriteLine($"You have {player.Stats.Health} health remaining.");
                     }
                 }
+                //run
                 else if (move == "r")
                 {
                     int chance = rand.Next(0, 2);

@@ -160,6 +160,7 @@ namespace DungeonExplorer
             DefaultArmorValue = armorValue;
         }
 
+        // Method to add a Golden Key to the player's inventory
         public void AddGoldenKey()
         {
             HasGoldenKey = true;
@@ -167,6 +168,7 @@ namespace DungeonExplorer
             Inventory.Add(new GoldenKey());
         }
 
+        // Method to remove a Golden Key from the player's inventory
         public void CollectItem(Item item)
         {
             if (item is ICollectible collectible)
@@ -180,12 +182,14 @@ namespace DungeonExplorer
             }
         }
 
+        // Method to add an item to the player's inventory
         public void AddToInventory(Item item)
         {
             Inventory.Add(item);
             Console.WriteLine($"You picked up a {item.Name}!");
         }
 
+        // Method to view the player's inventory
         public void ViewInventory()
         {
             while (true)
@@ -227,6 +231,7 @@ namespace DungeonExplorer
             }
         }
 
+        // Method to equip an item
         public void EquipItem()
         {
             Console.WriteLine("Enter the name of the item to equip:");
@@ -277,6 +282,8 @@ namespace DungeonExplorer
                 Console.WriteLine($"Item '{itemName}' is not a valid weapon or armor, or it is not in your inventory.");
             }
         }
+
+        // Method to unequip an item 
         public void UnequipItem()
         {
             Console.WriteLine("Enter the name of the item to unequip:");
@@ -302,6 +309,7 @@ namespace DungeonExplorer
             }
         }
 
+        // Method to sort the inventory
         public void SortInventory()
         {
             Console.Clear();
@@ -364,6 +372,7 @@ namespace DungeonExplorer
             Console.ReadKey();
         }
 
+        // Method to display items with weapon value
         public void DisplayItemsWithWeaponValue(List<Item> items)
         {
             foreach (var item in items)
@@ -379,6 +388,7 @@ namespace DungeonExplorer
             }
         }
 
+        // Method to display items with armor value
         public void DisplayItemsWithArmorValue(List<Item> items)
         {
             foreach (var item in items)
@@ -393,7 +403,7 @@ namespace DungeonExplorer
                 }
             }
         }
-
+        // Method to display all items in the inventory
         public void DisplayItems(IEnumerable<Item> items = null)
         {
             if (items == null)
@@ -415,6 +425,7 @@ namespace DungeonExplorer
             }
         }
 
+        // Method to add potions to the player's inventory
         public void AddPotion(int amount = 1)
         {
             if (amount > 0)
@@ -435,6 +446,7 @@ namespace DungeonExplorer
             }
         }
 
+        // Method to add keys to the player's inventory
         public void AddKey(int amount = 1)
         {
             if (amount > 0)
@@ -448,6 +460,7 @@ namespace DungeonExplorer
             }
         }
 
+        // Method to use a key
         public void UseKey()
         {
             if (Keys > 0)
@@ -461,6 +474,7 @@ namespace DungeonExplorer
             }
         }
 
+        // Method to use a potion
         public void UsePotion()
         {
             if (Potions > 0)
@@ -475,6 +489,7 @@ namespace DungeonExplorer
             }
         }
 
+        // Method to use an item
         public void UseItem(string itemName)
         {
             var item = _inventory.FirstOrDefault(i => i.Name.Equals(itemName, StringComparison.OrdinalIgnoreCase));
@@ -488,6 +503,7 @@ namespace DungeonExplorer
             }
         }
 
+        //method to take damage
         public void TakeDamage(int amount)
         {
             Stats.Health -= amount;
